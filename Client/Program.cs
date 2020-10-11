@@ -1,3 +1,5 @@
+using MudBlazor;
+
 namespace BlazorRepl.Client
 {
     using System;
@@ -27,6 +29,8 @@ namespace BlazorRepl.Client
                 .Configure<IConfiguration>((options, configuration) => configuration.GetSection("Snippets").Bind(options));
 
             builder.Logging.Services.AddSingleton<ILoggerProvider, HandleCriticalUserComponentExceptionsLoggerProvider>();
+            builder.Services.AddMudBlazorDialog();
+            builder.Services.AddMudBlazorSnackbar();
 
             await builder.Build().RunAsync();
         }

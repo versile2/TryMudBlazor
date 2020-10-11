@@ -1,5 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
 <div class="main">
     <PageNotifications @ref="@PageNotificationsComponent"></PageNotifications>
     <CascadingValue Value="@PageNotificationsComponent">
