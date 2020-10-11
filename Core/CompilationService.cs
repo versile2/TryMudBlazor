@@ -35,6 +35,13 @@
 @using MudBlazor.Dialog
 ";
 
+        private const string MudBlazorServices = @"
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+";
+
         // Creating the initial compilation + reading references is on the order of 250ms without caching
         // so making sure it doesn't happen for each run.
         private static CSharpCompilation baseCompilation;
@@ -192,7 +199,7 @@
             var declarations = new List<CompileToCSharpResult>(codeFiles.Count);
             foreach (var codeFile in codeFiles)
             {
-                var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
+                var projectItem = CreateRazorProjectItem(codeFile.Path, MudBlazorServices + codeFile.Content);
 
                 var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
                 var cSharpDocument = codeDocument.GetCSharpDocument();
