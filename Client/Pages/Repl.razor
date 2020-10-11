@@ -3,16 +3,26 @@
 
 @layout MainLayout
 
+<MudAppBar>
+    <MudLink  Style="color:white;" Class="mr-5"  Href="/">TryMudBlazor</MudLink>
+    <MudButton Class="mr-3" Style="color:white;" Variant="Variant.Text" co @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.PlayCircleOutline">
+        Run
+    </MudButton>
+    <MudButton Class="mr-3" Style="color:white;" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Save">
+        Save
+    </MudButton>
+</MudAppBar>
+
 <nav class="navbar repl-navbar">
     <div class="container-fluid">
         <div class="navbar-header" style="color: #303133">
-            <a href="/" class="navbar-brand">Blazor REPL</a>
+            @*<a href="/" class="navbar-brand">Blazor REPL</a>
             <button class="btn btn-link nav-action" @onclick="@CompileAsync" disabled="@Loading" title="Run (Ctrl + S)">
                 <i class="icon-play4"></i> RUN
             </button>
             <button @onclick="@ShowSaveSnippetPopup" class="btn btn-link nav-action" id="save-snippet-btn" title="Save public snippet">
                 <i class="icon-floppy-disk"></i> SAVE
-            </button>
+            </button>*@
         </div>
     </div>
 </nav>

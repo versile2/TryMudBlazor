@@ -30,7 +30,10 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
-@using Microsoft.JSInterop";
+@using Microsoft.JSInterop
+@using MudBlazor
+@using MudBlazor.Dialog
+";
 
         // Creating the initial compilation + reading references is on the order of 250ms without caching
         // so making sure it doesn't happen for each run.
@@ -54,6 +57,7 @@
                 typeof(HttpClient).Assembly, // System.Net.Http
                 typeof(IJSRuntime).Assembly, // Microsoft.JSInterop
                 typeof(RequiredAttribute).Assembly, // System.ComponentModel.Annotations
+                typeof(MudBlazor.MudButton).Assembly, // MudBlazor
             };
 
             var assemblyNames = basicReferenceAssemblyRoots
