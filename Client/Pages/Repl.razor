@@ -1,5 +1,5 @@
-﻿@page "/repl/{snippetId}"
-@page "/repl/"
+﻿@page "/snippet/{snippetId}"
+@page "/snippet/"
 
 @layout MainLayout
 
@@ -32,7 +32,7 @@
                   CodeFiles="@CodeFiles.Values"
                   UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
 
-<div class="row flex" style="margin: 0">
+<div class="row flex" style="margin: 0; margin-top: 60px;">
     <ReplLoader Show="@Loading"
                 Message="@LoaderText"></ReplLoader>
 

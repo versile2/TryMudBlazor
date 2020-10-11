@@ -69,7 +69,7 @@
 
                 var snippetId = await this.SnippetsService.SaveSnippetAsync(this.CodeFiles);
 
-                var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
+                var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"snippet/{snippetId}" };
                 var url = urlBuilder.Uri.ToString();
                 this.SnippetLink = url;
 
