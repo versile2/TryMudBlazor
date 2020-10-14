@@ -1,56 +1,88 @@
-﻿html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+﻿/* MudBlaozr */
+.mudblazor-brand {
+    font-size: 1.7rem;
+    font-weight: 300;
+    letter-spacing: .1rem;
+    line-height: 1.5;
+    color: #444;
+    margin-left: auto;
+    margin-right: auto;
+}
+.docs-footer {
+    padding: 48px 0px;
+    margin-bottom: -64px;
 }
 
-a, .btn-link {
-    color: #0366d6;
-}
-
-* {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-app {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.top-row {
-    height: 3.5rem;
-    display: flex;
-    align-items: center;
-}
-
-.main {
-    flex: 1;
-    position: relative;
-}
-
-    .main .top-row {
-        background-color: #f7f7f7;
-        border-bottom: 1px solid #d6d5d5;
-        justify-content: flex-end;
+    .docs-footer h1 {
+        font-weight: 400;
+        letter-spacing: .4rem;
+        line-height: 1.167;
+        font-size: 1rem;
     }
 
-        .main .top-row > a, .main .top-row .btn-link {
-            white-space: nowrap;
-            margin-left: 1.5rem;
-        }
+    .docs-footer ul li {
+        padding: 6px 0;
+    }
 
-        .main .top-row a:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+.mudblazor-svg {
+    width: 500px;
+    flex-shrink: 0;
+    /*-webkit-filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 1));*/
+    filter: drop-shadow(11px 15px 7px rgba(0,0,0,.2));
+}
 
-.blazor-logo {
-    width: 49px;
-    padding-right: 10px;
-    display: flex;
-    padding-bottom: 4px;
-    align-self: center;
+
+.trymudblazor-index {
+
+}
+    .trymudblazor-index .mud-typography-h1 {
+        letter-spacing: .1rem;
+    }
+    .trymudblazor-index .mud-typography-h5 {
+        font-size: 1.2rem;
+    }
+
+    .trymudblazor-index .mud-button {
+        border-radius: 6px;
+        width: 100%;
+        height: 60px;
+        box-shadow: 0 8px 10px -5px rgba(0,0,0,.2), 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12);
+    }
+
+.trymudblazor-paper {
+    border-radius: 12px;
+    padding: 80px 100px;
+    margin-left: 24px;
+    margin-right: 24px;
+    margin-top: 64px;
+    margin-bottom: 128px;
+}
+
+.trymudblazor-paper-item {
+    width:100%;
+}
+
+    .trymudblazor-paper-item .mud-typography-h5 {
+        font-weight:500;
+    }
+
+.trymudblazor-index-appbar {
+    margin-bottom: 128px;
+}
+
+    .trymudblazor-index-appbar .mud-button {
+        letter-spacing: .1rem;
+        font-weight: 400;
+        font-size: 1rem;
+        text-transform: none;
+    }
+
+.mud-container + .mud-container {
+    margin-bottom: 128px;
+}
+
+.mud-main-content {
+    padding-top: 0px;
 }
 
 .blazor-logo-wrapper {
@@ -288,26 +320,6 @@ app {
 
     .user-page-loader {
         left: 40%;
-    }
-}
-
-@media (min-width: 768px) {
-    app {
-        flex-direction: row;
-    }
-
-    .main .top-row {
-        position: sticky;
-        top: 0;
-    }
-
-    /*.main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }*/
-
-    .navbar-toggler {
-        display: none;
     }
 }
 

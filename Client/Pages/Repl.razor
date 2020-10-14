@@ -3,7 +3,7 @@
 
 @layout MainLayout
 
-<MudAppBar>
+<MudAppBar Elevation="0">
     <MudLink  Style="color:white;" Class="mr-5"  Href="/">TryMudBlazor</MudLink>
     <MudButton Class="mr-3" Style="color:white;" Variant="Variant.Text" co @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.PlayCircleOutline">
         Run
@@ -27,28 +27,19 @@
     </div>
 </nav>
 
-<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible"
-                  InvokerId="save-snippet-btn"
-                  CodeFiles="@CodeFiles.Values"
-                  UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
+<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0; margin-top: 60px;">
-    <ReplLoader Show="@Loading"
-                Message="@LoaderText"></ReplLoader>
+    <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <TabManager Tabs="@CodeFileNames"
-                    OnTabActivate="@HandleTabActivateAsync"
-                    OnTabClose="@HandleTabClose"
-                    OnTabCreate="@HandleTabCreateAsync"></TabManager>
+        <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivateAsync" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreateAsync"></TabManager>
 
-        <CodeEditor @ref="@CodeEditorComponent"
-                    Code="@CodeEditorContent"></CodeEditor>
+        <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent"></CodeEditor>
     </div>
     <div id="user-page-window-container">
         <iframe id="user-page-window" src="/user-page"></iframe>
     </div>
 </div>
 
-<ErrorList @bind-Show="@AreDiagnosticsShown"
-           Diagnostics="@Diagnostics"></ErrorList>
+<ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"></ErrorList>
