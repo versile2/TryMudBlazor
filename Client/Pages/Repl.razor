@@ -3,43 +3,37 @@
 
 @layout MainLayout
 
-<MudAppBar Elevation="0">
-    <MudLink  Style="color:white;" Class="mr-5"  Href="/">TryMudBlazor</MudLink>
-    <MudButton Class="mr-3" Style="color:white;" Variant="Variant.Text" co @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.PlayCircleOutline">
-        Run
-    </MudButton>
-    <MudButton Class="mr-3" Style="color:white;" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Save">
-        Save
-    </MudButton>
-</MudAppBar>
+<div class="trymudblazor-repl">
+    <MudAppBar Elevation="0" Dense="true" Color="Color.Primary" Class="repl-navbar">
+        <MudLink Style="color:#fff;" Class="mr-5" Href="/">TryMudBlazor</MudLink>
+        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.PlayCircleOutline">
+            Run
+        </MudButton>
+        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Save">
+            Save
+        </MudButton>
+    </MudAppBar>
 
-<nav class="navbar repl-navbar">
-    <div class="container-fluid">
-        <div class="navbar-header" style="color: #303133">
-            @*<a href="/" class="navbar-brand">Blazor REPL</a>
-            <button class="btn btn-link nav-action" @onclick="@CompileAsync" disabled="@Loading" title="Run (Ctrl + S)">
-                <i class="icon-play4"></i> RUN
-            </button>
-            <button @onclick="@ShowSaveSnippetPopup" class="btn btn-link nav-action" id="save-snippet-btn" title="Save public snippet">
-                <i class="icon-floppy-disk"></i> SAVE
-            </button>*@
+    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
+
+    <div class="trymudblazor-editor">
+        <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
+
+        <div id="user-code-editor-container">
+            <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivateAsync" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreateAsync"></TabManager>
+
+            <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent"></CodeEditor>
+        </div>
+        <div id="user-page-window-container">
+            <iframe id="user-page-window" src="/user-page"></iframe>
         </div>
     </div>
-</nav>
-
-<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
-
-<div class="row flex" style="margin: 0; margin-top: 60px;">
-    <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
-
-    <div id="user-code-editor-container">
-        <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivateAsync" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreateAsync"></TabManager>
-
-        <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent"></CodeEditor>
-    </div>
-    <div id="user-page-window-container">
-        <iframe id="user-page-window" src="/user-page"></iframe>
+    <div class="trymudblazor-errorlist">
+        <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"></ErrorList>
     </div>
 </div>
 
-<ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"></ErrorList>
+
+    
+
+
