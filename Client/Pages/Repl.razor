@@ -5,13 +5,16 @@
 
 <div class="trymudblazor-repl">
     <MudAppBar Elevation="0" Dense="true" Color="Color.Primary" Class="repl-navbar">
-        <MudLink Style="color:#fff;" Class="mr-5" Href="/">TryMudBlazor</MudLink>
+        <MudLink Style="color:#fff !important;" Class="mr-5" Href="/">TryMudBlazor</MudLink>
         <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.PlayCircleOutline">
             Run
         </MudButton>
         <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Save">
             Save
         </MudButton>
+        <MudText Typo="Typo.body2" Class="ml-10">
+            MudBlazor @Version
+        </MudText>
     </MudAppBar>
 
     <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
@@ -33,7 +36,17 @@
     </div>
 </div>
 
-
+@code
+{
+    string Version
+    {
+        get
+        {
+            var v= typeof(MudText).Assembly.GetName().Version;
+            return $"v{v.Major}.{v.Minor}.{v.Build}";
+        }
+    }
+}
     
 
 
