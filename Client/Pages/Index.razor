@@ -24,7 +24,7 @@
                     Try<span style="color: #594ae2;">MudBlazor</span>
                 </MudText>
                 <MudText Typo="Typo.h5" Class="my-5" Align="Align.Center">
-                    A playground for trying out <MudLink Typo="Typo.h5" Href="https://mudblazor.com" Target="_blank">MudBlazor</MudLink>.
+                    A playground for <MudLink Typo="Typo.h5" Href="https://mudblazor.com" Target="_blank">MudBlazor</MudLink> @Version.
                 </MudText>
                 <div class="px-6 mt-8">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="/snippet">Try out now</MudButton>
@@ -71,3 +71,16 @@
     </MudPaper>
 </MudContainer>
 <Footer />
+
+@code{
+
+    string Version
+    {
+        get
+        {
+            var v= typeof(MudText).Assembly.GetName().Version;
+            return $"v{v.Major}.{v.Minor}.{v.Build}";
+        }
+    }
+
+}
