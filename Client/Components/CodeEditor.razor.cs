@@ -13,14 +13,13 @@
         private bool hasCodeChanged;
 
         [Inject]
-        public IJSRuntime JsRuntime { get; set; }
+        public IJSInProcessRuntime JsRuntime { get; set; }
 
         [Parameter]
         public string Code { get; set; }
 
-        public ValueTask<string> GetCodeAsync() => this.JsRuntime.InvokeAsync<string>("App.CodeEditor.getValue");
-
-        public ValueTask FocusAsync() => this.JsRuntime.InvokeVoidAsync("App.CodeEditor.focus");
+        [Parameter]
+        public CodeFileType CodeFileType { get; set; }
 
         public override Task SetParametersAsync(ParameterView parameters)
         {
@@ -32,23 +31,28 @@
             return base.SetParametersAsync(parameters);
         }
 
-        public void Dispose() => _ = this.JsRuntime.InvokeAsync<string>("App.CodeEditor.dispose");
+        public void Dispose() => this.JsRuntime.InvokeVoid("App.CodeEditor.dispose");
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        internal void Focus() => this.JsRuntime.InvokeVoid("App.CodeEditor.focus");
+
+        internal string GetCode() => this.JsRuntime.Invoke<string>("App.CodeEditor.getValue");
+
+        protected override void OnAfterRender(bool firstRender)
         {
             if (firstRender)
             {
-                await this.JsRuntime.InvokeVoidAsync(
+                this.JsRuntime.InvokeVoid(
                    "App.CodeEditor.init",
                    EditorId,
                    this.Code ?? CoreConstants.MainComponentDefaultFileContent);
             }
             else if (this.hasCodeChanged)
             {
-                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.setValue", this.Code);
+                var language = this.CodeFileType == CodeFileType.CSharp ? "csharp" : "razor";
+                this.JsRuntime.InvokeVoid("App.CodeEditor.setValue", this.Code, language);
             }
 
-            await base.OnAfterRenderAsync(firstRender);
+            base.OnAfterRender(firstRender);
         }
     }
 }

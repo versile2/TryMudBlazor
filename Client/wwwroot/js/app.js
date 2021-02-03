@@ -17,14 +17,6 @@
 
             window.history.pushState(null, null, url);
         },
-        focusElement: function (selector) {
-            if (!selector) {
-                return;
-            }
-
-            const element = document.querySelector(selector);
-            element && element.focus();
-        },
         copyToClipboard: function (text) {
             if (!text) {
                 return;
@@ -46,8 +38,9 @@
 window.App.CodeEditor = window.App.CodeEditor || (function () {
     let _editor;
     let _overrideValue;
+    let _currentLanguage;
 
-    function initEditor(editorId, value) {
+    function initEditor(editorId, value, language) {
         if (!editorId) {
             return;
         }
@@ -57,10 +50,11 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
             _editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
                 value: _overrideValue || value || '',
-                language: 'razor'
+                language: language || _currentLanguage || 'razor'
             });
 
             _overrideValue = null;
+            _currentLanguage = language || _currentLanguage;
         });
     }
 
@@ -68,11 +62,16 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
         return _editor && _editor.getValue();
     }
 
-    function setValue(value) {
+    function setValue(value, language) {
         if (_editor) {
             _editor.setValue(value || '');
+            if (language && language !== _currentLanguage) {
+                monaco.editor.setModelLanguage(_editor.getModel(), language);
+                _currentLanguage = language;
+            }
         } else {
             _overrideValue = value;
+            _currentLanguage = language || _currentLanguage;
         }
     }
 
@@ -92,47 +91,16 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
     };
 }());
 
-window.App.TabManager = window.App.TabManager || (function () {
-    const ENTER_KEY_CODE = 13;
-
-    let _dotNetInstance;
-    let _newTabInput;
-
-    function onNewTabInputKeyDown(ev) {
-        if (ev.keyCode == ENTER_KEY_CODE) {
-            ev.preventDefault();
-
-            if (_dotNetInstance && _dotNetInstance.invokeMethodAsync) {
-                _dotNetInstance.invokeMethodAsync('CreateTabAsync');
-            }
-        }
-    }
-
-    return {
-        init: function (newTabInputSelector, dotNetInstance) {
-            _dotNetInstance = dotNetInstance;
-            _newTabInput = document.querySelector(newTabInputSelector);
-            if (_newTabInput) {
-                _newTabInput.addEventListener('keydown', onNewTabInputKeyDown);
-            }
-        },
-        dispose: function () {
-            _dotNetInstance = null;
-
-            if (_newTabInput) {
-                _newTabInput.removeEventListener('keydown', onNewTabInputKeyDown);
-            }
-        }
-    };
-}());
-
 window.App.Repl = window.App.Repl || (function () {
+    const S_KEY_CODE = 83;
+
     const throttleLastTimeFuncNameMappings = {};
 
     let _dotNetInstance;
     let _editorContainerId;
     let _resultContainerId;
     let _editorId;
+    let _originalHistoryPushStateFunction;
 
     function setElementHeight(elementId, excludeTabsHeight) {
         const element = document.getElementById(elementId);
@@ -177,14 +145,14 @@ window.App.Repl = window.App.Repl || (function () {
         }
     }
 
-    function resetEditor() {
+    function resetEditor(newLanguage) {
         const value = window.App.CodeEditor.getValue();
         const oldEditorElement = document.getElementById(_editorId);
         if (oldEditorElement && oldEditorElement.childNodes) {
             oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
         }
 
-        window.App.CodeEditor.initEditor(_editorId, value);
+        window.App.CodeEditor.initEditor(_editorId, value, newLanguage);
     }
 
     function onWindowResize() {
@@ -194,8 +162,7 @@ window.App.Repl = window.App.Repl || (function () {
     }
 
     function onKeyDown(e) {
-        // CTRL + S
-        if (e.ctrlKey && e.keyCode === 83) {
+        if (e.ctrlKey && e.keyCode === S_KEY_CODE) {
             e.preventDefault();
 
             if (_dotNetInstance && _dotNetInstance.invokeMethodAsync) {
@@ -213,16 +180,29 @@ window.App.Repl = window.App.Repl || (function () {
         }
     }
 
-    function base64ToArrayBuffer(base64) {
-        const binaryString = window.atob(base64);
-        const binaryLen = binaryString.length;
-        const bytes = new Uint8Array(binaryLen);
-        for (let i = 0; i < binaryLen; i++) {
-            const ascii = binaryString.charCodeAt(i);
-            bytes[i] = ascii;
-        }
+    function enableNavigateAwayConfirmation() {
+        window.onbeforeunload = () => true;
 
-        return bytes;
+        _originalHistoryPushStateFunction = window.history.pushState;
+        window.history.pushState = (originalHistoryPushStateFunction => function () {
+            const newUrl = arguments[2] && arguments[2].toLowerCase();
+            if (newUrl && (newUrl.endsWith('/repl') || newUrl.includes('/repl/'))) {
+                return originalHistoryPushStateFunction.apply(this, arguments);
+            }
+
+            const navigateAwayConfirmed = confirm('Are you sure you want to leave REPL page? Changes you made may not be saved.');
+            return navigateAwayConfirmed
+                ? originalHistoryPushStateFunction.apply(this, arguments)
+                : null;
+        })(window.history.pushState);
+    }
+
+    function disableNavigateAwayConfirmation() {
+        window.onbeforeunload = null;
+
+        if (_originalHistoryPushStateFunction) {
+            window.history.pushState = _originalHistoryPushStateFunction;
+        }
     }
 
     return {
@@ -241,14 +221,27 @@ window.App.Repl = window.App.Repl || (function () {
 
             window.addEventListener('resize', onWindowResize);
             window.addEventListener('keydown', onKeyDown);
+
+            enableNavigateAwayConfirmation();
         },
-        setCodeEditorContainerHeight: function () {
-            if (setElementHeight(_editorContainerId, true)) {
-                resetEditor();
+        setCodeEditorContainerHeight: function (newLanguage) {
+            setElementHeight(_editorContainerId, true);
+            resetEditor(newLanguage);
+        },
+        updateUserAssemblyInCacheStorage: function (rawFileBytes) {
+            if (!rawFileBytes) {
+                return;
             }
-        },
-        updateUserAssemblyInCacheStorage: function (file) {
-            const response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));
+
+            const fileBytes = Blazor.platform.toUint8Array(rawFileBytes);
+            const response = new Response(
+                new Blob([fileBytes]),
+                {
+                    headers: {
+                        'content-length': fileBytes.length.toString(),
+                        'content-type': 'application/octet-stream'
+                    }
+                });
 
             caches.open('blazor-resources-/').then(function (cache) {
                 if (!cache) {
@@ -274,6 +267,8 @@ window.App.Repl = window.App.Repl || (function () {
 
             window.removeEventListener('resize', onWindowResize);
             window.removeEventListener('keydown', onKeyDown);
+
+            disableNavigateAwayConfirmation();
         }
     };
 }());
