@@ -21,7 +21,7 @@
                     }
 
                     <div class="mud-tab" style="@TabCreatingDisplayStyle">
-                        <input type="text" class="mud-tab-input" id="new-tab-input" @bind="@newTab" @bind:event="oninput" @onblur="@CreateTabAsyncInternal" />
+                        <input type="text" class="mud-tab-input" id="new-tab-input" @bind="@newTab" @bind:event="oninput" @onblur="@CreateTabAsync" />
                     </div>
 
                     <div class="mud-tab mud-ripple" @onclick="@InitTabCreating">

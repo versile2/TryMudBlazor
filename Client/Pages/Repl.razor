@@ -6,10 +6,10 @@
 <div class="trymudblazor-repl">
     <MudAppBar Elevation="0" Dense="true" Color="Color.Primary" Class="repl-navbar">
         <MudLink Style="color:#fff !important;" Class="mr-5" Href="/">TryMudBlazor</MudLink>
-        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.PlayCircleOutline">
+        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.Filled.PlayCircleOutline">
             Run
         </MudButton>
-        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Save">
+        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Filled.Save">
             Save
         </MudButton>
         <MudText Typo="Typo.body2" Class="ml-10">
@@ -17,13 +17,13 @@
         </MudText>
     </MudAppBar>
 
-    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
+    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
 
     <div class="trymudblazor-editor">
         <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
         <div id="user-code-editor-container">
-            <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivateAsync" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreateAsync"></TabManager>
+            <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivate" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreate"></TabManager>
 
             <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent"></CodeEditor>
         </div>
