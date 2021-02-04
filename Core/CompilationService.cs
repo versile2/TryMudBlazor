@@ -214,7 +214,7 @@
             {
                 if (codeFile.Type == CodeFileType.Razor)
                 {
-                    var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
+                    var projectItem = CreateRazorProjectItem(codeFile.Path, MudBlazorServices + codeFile.Content);
 
                     var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
                     var cSharpDocument = codeDocument.GetCSharpDocument();

@@ -6,7 +6,7 @@
     "configurations": [
         {
             "type": "blazorwasm",
-            "cwd":"${workspaceFolder}/Client",
+            "cwd":"${workspaceFolder}/Server",
             "name": "Launch and Debug Blazor WebAssembly Application",
             "request": "launch"
         }
