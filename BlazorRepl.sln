@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorRepl.Client", "Client\BlazorRepl.Client.csproj", "{EF62B2E2-56D5-4F26-89F8-91014D335C33}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorRepl.Server", "Server\BlazorRepl.Server.csproj", "{65FD337C-4469-4FE7-8A63-AF9A4F23A0A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{65FD337C-4469-4FE7-8A63-AF9A4F23A0A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorRepl.UserComponents", "UserComponents\BlazorRepl.UserComponents.csproj", "{85C7106C-38F5-4057-BDD4-E84825735942}"
 EndProject
