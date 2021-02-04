@@ -2,8 +2,8 @@
 {
     public class SnippetsOptions
     {
-        public string CreateUrl { get; set; }
+        public string StorageAccount { get; set; }
 
-        public string ReadUrlFormat { get; set; }
+        public string SnippetsContainer { get; set; }
     }
 }

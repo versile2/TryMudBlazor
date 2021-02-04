@@ -6,14 +6,17 @@
     using System.IO.Compression;
     using System.Net.Http;
     using System.Net.Http.Json;
+    using System.Text;
     using System.Threading.Tasks;
+    using Azure.Storage.Blobs;
+    using Azure.Storage.Blobs.Models;
     using BlazorRepl.Client.Models;
     using BlazorRepl.Core;
     using Microsoft.Extensions.Options;
 
     public class SnippetsService
     {
-        private const int SnippetIdLength = 18;
+        private const int SnippetIdLength = 16;
 
         private static readonly IDictionary<char, char> LetterToDigitIdMappings = new Dictionary<char, char>
         {
@@ -71,13 +74,13 @@
             ['Z'] = '9',
         };
 
-        private readonly HttpClient httpClient;
         private readonly SnippetsOptions snippetsOptions;
+        private readonly string connectionString;
 
-        public SnippetsService(HttpClient httpClient, IOptions<SnippetsOptions> snippetsOptions)
+        public SnippetsService(IOptions<SnippetsOptions> snippetsOptions)
         {
-            this.httpClient = httpClient;
             this.snippetsOptions = snippetsOptions.Value;
+            this.connectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
         }
 
         public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
@@ -93,13 +96,40 @@
                 throw new InvalidOperationException(codeFilesValidationError);
             }
 
-            var requestData = new CreateSnippetRequestModel { Files = codeFiles };
+            // snippet id total length as a string is 16 chars
+            var yearFolder = DateTime.Now.Year;
+            var monthFolder = DateTime.Now.Month;
+            var dayFolder = DateTime.Now.Day;
+            var time = Convert.ToInt32(DateTime.Now.TimeOfDay.TotalMilliseconds);
+            var snippetFolder = $"{yearFolder:0000}/{monthFolder:00}/{dayFolder:00}";
+            var snippetTime = $"{time:D8}";
+            var snippetId = $"{yearFolder:0000}{monthFolder:00}{dayFolder:00}{snippetTime:D8}";
+            var blobName = $"{snippetFolder}/{snippetTime}";
 
-            var response = await this.httpClient.PostAsJsonAsync(this.snippetsOptions.CreateUrl, requestData);
-            response.EnsureSuccessStatusCode();
+            var blobServiceClient = new BlobServiceClient(this.connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient(this.snippetsOptions.SnippetsContainer);
 
-            var id = await response.Content.ReadAsStringAsync();
-            return id;
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var codeFile in codeFiles)
+                    {
+                        var byteArray = Encoding.ASCII.GetBytes(codeFile.Content);
+                        var codeEntry = archive.CreateEntry(codeFile.Path);
+                        using (var entryStream = codeEntry.Open())
+                        using (var streamWriter = new StreamWriter(entryStream))
+                        {
+                            entryStream.Write(byteArray);
+                        }
+                    }
+                }
+
+                memoryStream.Position = 0;
+                await containerClient.UploadBlobAsync(blobName, memoryStream);
+            }
+
+            return snippetId;
         }
 
         public async Task<IEnumerable<CodeFile>> GetSnippetContentAsync(string snippetId)
@@ -109,39 +139,36 @@
                 throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
             }
 
-            var yearFolder = DecodeDateIdPart(snippetId.Substring(0, 2));
-            var monthFolder = DecodeDateIdPart(snippetId.Substring(2, 2));
-            var dayAndHourFolder = DecodeDateIdPart(snippetId.Substring(4, 4));
+            var yearFolder = snippetId.Substring(0, 4);
+            var monthFolder = snippetId.Substring(4, 2);
+            var dayFolder = snippetId.Substring(6, 2);
+            var time = snippetId.Substring(8);
             var id = snippetId.Substring(8);
+            var snippetFolder = $"{yearFolder:0000}/{monthFolder:00}/{dayFolder:00}";
+            var snippetTime = $"{time:00000000}";
+            var blobName = $"{snippetFolder}/{snippetTime}";
 
-            var url = string.Format(this.snippetsOptions.ReadUrlFormat, yearFolder, monthFolder, dayAndHourFolder, id);
-            var snippetResponse = await this.httpClient.GetAsync(url);
-            snippetResponse.EnsureSuccessStatusCode();
+            var blobServiceClient = new BlobServiceClient(this.connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient(this.snippetsOptions.SnippetsContainer);
+            var blob = containerClient.GetBlobClient(blobName);
+            var response = await blob.DownloadAsync();
+            var zipStream = new MemoryStream();
+            await response.Value.Content.CopyToAsync(zipStream);
 
-            var snippetFiles = await ExtractSnippetFilesFromResponseAsync(snippetResponse);
+            var snippetFiles = await ExtractSnippetFilesFromZip(zipStream);
             return snippetFiles;
         }
 
-        private static async Task<IEnumerable<CodeFile>> ExtractSnippetFilesFromResponseAsync(HttpResponseMessage snippetResponse)
+        private static async Task<IEnumerable<CodeFile>> ExtractSnippetFilesFromZip(MemoryStream zipStream)
         {
             var result = new List<CodeFile>();
 
-            if (snippetResponse.Headers.TryGetValues("x-ms-meta-zip", out _))
+            using var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read);
+            foreach (var entry in zipArchive.Entries)
             {
-                await using var zipFileStream = await snippetResponse.Content.ReadAsStreamAsync();
-                using var zipArchive = new ZipArchive(zipFileStream, ZipArchiveMode.Read);
-                foreach (var entry in zipArchive.Entries)
-                {
-                    using var streamReader = new StreamReader(entry.Open());
+                using var streamReader = new StreamReader(entry.Open());
 
-                    result.Add(new CodeFile { Path = entry.FullName, Content = await streamReader.ReadToEndAsync() });
-                }
-            }
-            else
-            {
-                var fileContent = await snippetResponse.Content.ReadAsStringAsync();
-
-                result.Add(new CodeFile { Path = CoreConstants.MainComponentFilePath, Content = fileContent });
+                result.Add(new CodeFile { Path = entry.FullName, Content = await streamReader.ReadToEndAsync() });
             }
 
             return result;
