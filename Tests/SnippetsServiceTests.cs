@@ -40,10 +40,12 @@ namespace Tests
         [Test]
         public async Task TestPut()
         {
+
             var snippetsOptions = Options.Create(new SnippetsOptions()
             {
+                StorageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString"),
                 SnippetsContainer = "snippets"
-            }); ;
+            });
 
             var snippetService = new SnippetsService(snippetsOptions);
             var id = await snippetService.SaveSnippetAsync(codeFiles);

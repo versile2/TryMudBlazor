@@ -75,12 +75,10 @@
         };
 
         private readonly SnippetsOptions snippetsOptions;
-        private readonly string connectionString;
 
         public SnippetsService(IOptions<SnippetsOptions> snippetsOptions)
         {
             this.snippetsOptions = snippetsOptions.Value;
-            this.connectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING");
         }
 
         public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
@@ -96,7 +94,6 @@
                 throw new InvalidOperationException(codeFilesValidationError);
             }
 
-            // snippet id total length as a string is 16 chars
             var yearFolder = DateTime.Now.Year;
             var monthFolder = DateTime.Now.Month;
             var dayFolder = DateTime.Now.Day;
@@ -106,8 +103,7 @@
             var snippetId = $"{yearFolder:0000}{monthFolder:00}{dayFolder:00}{snippetTime:D8}";
             var blobName = $"{snippetFolder}/{snippetTime}";
 
-            var blobServiceClient = new BlobServiceClient(this.connectionString);
-            var containerClient = blobServiceClient.GetBlobContainerClient(this.snippetsOptions.SnippetsContainer);
+
 
             using (var memoryStream = new MemoryStream())
             {
@@ -118,7 +114,6 @@
                         var byteArray = Encoding.ASCII.GetBytes(codeFile.Content);
                         var codeEntry = archive.CreateEntry(codeFile.Path);
                         using (var entryStream = codeEntry.Open())
-                        using (var streamWriter = new StreamWriter(entryStream))
                         {
                             entryStream.Write(byteArray);
                         }
@@ -126,6 +121,9 @@
                 }
 
                 memoryStream.Position = 0;
+
+                var blobServiceClient = new BlobServiceClient(this.snippetsOptions.StorageConnectionString);
+                var containerClient = blobServiceClient.GetBlobContainerClient(this.snippetsOptions.SnippetsContainer);
                 await containerClient.UploadBlobAsync(blobName, memoryStream);
             }
 
@@ -143,12 +141,11 @@
             var monthFolder = snippetId.Substring(4, 2);
             var dayFolder = snippetId.Substring(6, 2);
             var time = snippetId.Substring(8);
-            var id = snippetId.Substring(8);
             var snippetFolder = $"{yearFolder:0000}/{monthFolder:00}/{dayFolder:00}";
             var snippetTime = $"{time:00000000}";
             var blobName = $"{snippetFolder}/{snippetTime}";
 
-            var blobServiceClient = new BlobServiceClient(this.connectionString);
+            var blobServiceClient = new BlobServiceClient(this.snippetsOptions.StorageConnectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(this.snippetsOptions.SnippetsContainer);
             var blob = containerClient.GetBlobClient(blobName);
             var response = await blob.DownloadAsync();
