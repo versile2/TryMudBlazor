@@ -13,7 +13,7 @@ namespace Tests
     public class Tests
     {
         List<CodeFile> codeFiles = new List<CodeFile>();
-        SnippetsOptions snippetsOptions;
+        IOptions<SnippetsOptions> snippetsOptions;
 
         [SetUp]
         public void Setup()
@@ -25,7 +25,7 @@ namespace Tests
             codeFile2.Content = "<h1>Test</h1>";
             codeFiles.Add(codeFile2);
 
-            snippetsOptions = new SnippetsOptions(){SnippetsService = "https://localhost:5001/api/snippets/"};
+            snippetsOptions = Options.Create(new SnippetsOptions(){SnippetsService = "/api/snippets/"});
 
         }
 

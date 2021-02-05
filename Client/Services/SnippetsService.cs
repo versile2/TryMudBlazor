@@ -74,11 +74,12 @@
         };
 
         private readonly HttpClient httpClient;
+        private readonly string snippetsService;
 
-        public SnippetsService(SnippetsOptions snippetsOptions, HttpClient httpClient)
+        public SnippetsService(IOptions<SnippetsOptions> snippetsOptions, HttpClient httpClient)
         {
             this.httpClient = httpClient;
-            this.httpClient.BaseAddress = new Uri(snippetsOptions.SnippetsService);
+            this.snippetsService = snippetsOptions.Value.SnippetsService;
         }
 
         public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
@@ -112,7 +113,7 @@
 
                 var inputData = new StreamContent(memoryStream);
 
-                var response = await this.httpClient.PostAsync(string.Empty, inputData);
+                var response = await this.httpClient.PostAsync(this.snippetsService, inputData);
                 snippetId = await response.Content.ReadAsStringAsync();
             }
 
@@ -126,7 +127,7 @@
                 throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
             }
 
-            var reponse = await this.httpClient.GetAsync(snippetId);
+            var reponse = await this.httpClient.GetAsync($"{this.snippetsService}/{snippetId}");
 
             var zipStream = await reponse.Content.ReadAsStreamAsync();
             zipStream.Position = 0;
