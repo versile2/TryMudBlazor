@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Core\BlazorRepl.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
 </Project>
