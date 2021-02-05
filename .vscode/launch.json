@@ -5,8 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug webapi",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Server/bin/Debug/net5.0/Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Server",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+
+        {
             "type": "blazorwasm",
-            "cwd":"${workspaceFolder}/Server",
+            "cwd":"${workspaceFolder}/Client",
             "name": "Launch and Debug Blazor WebAssembly Application",
             "request": "launch"
         }

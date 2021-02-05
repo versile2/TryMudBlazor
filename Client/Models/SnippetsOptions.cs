@@ -2,8 +2,6 @@
 {
     public class SnippetsOptions
     {
-        public string StorageConnectionString { get; set; }
-
-        public string SnippetsContainer { get; set; }
+        public string SnippetsService { get; set; }
     }
 }

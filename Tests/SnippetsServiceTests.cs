@@ -8,10 +8,12 @@ namespace Tests
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System;
+    using Microsoft.Extensions.Configuration;
 
     public class Tests
     {
         List<CodeFile> codeFiles = new List<CodeFile>();
+        SnippetsOptions snippetsOptions;
 
         [SetUp]
         public void Setup()
@@ -22,35 +24,33 @@ namespace Tests
             var codeFile2 = new CodeFile() { Path = "Test.razor" };
             codeFile2.Content = "<h1>Test</h1>";
             codeFiles.Add(codeFile2);
+
+            snippetsOptions = new SnippetsOptions(){SnippetsService = "https://localhost:5001/api/snippets/"};
+
         }
 
         [Test]
         public async Task TestGet()
         {
-            var snippetsOptions = Options.Create(new SnippetsOptions() {
-                SnippetsContainer = "snippets"
-            }); ;
-
-            var snippetService = new SnippetsService(snippetsOptions);
-            var codeFiles = await snippetService.GetSnippetContentAsync("2021020449939785");
+            var snippetService = new SnippetsService(snippetsOptions, new System.Net.Http.HttpClient());
+            var codeFiles = await snippetService.GetSnippetContentAsync("2021020540572059");
             Assert.IsNotNull(codeFiles);
-
         }
 
         [Test]
         public async Task TestPut()
         {
-
-            var snippetsOptions = Options.Create(new SnippetsOptions()
-            {
-                StorageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString"),
-                SnippetsContainer = "snippets"
-            });
-
-            var snippetService = new SnippetsService(snippetsOptions);
+            var snippetService = new SnippetsService(snippetsOptions, new System.Net.Http.HttpClient());
             var id = await snippetService.SaveSnippetAsync(codeFiles);
             Assert.IsNotNull(id);
             Console.WriteLine(id);
+            var savedCodeFiles = await snippetService.GetSnippetContentAsync("2021020540572059");
+            List<CodeFile> savedCodeFilesList = new List<CodeFile>(savedCodeFiles);
+            for (int i = 0; i  < codeFiles.Count; i++ )
+            {
+                Assert.AreEqual(codeFiles[i].Path, savedCodeFilesList[i].Path);
+                Assert.AreEqual(codeFiles[i].Content,  savedCodeFilesList[i].Content);
+            }
         }
     }
 }
