@@ -28,7 +28,12 @@ namespace Server.Controllers
             var containerUri = new Uri(_config["SnippetsContainerUrl"]);
             string accessKey = _config["SnippetsAccessKey"];
             if (accessKey == "secret")
-                containerClient = new BlobContainerClient(containerUri, new DefaultAzureCredential());
+            {
+                var defaultAzureCredentialOptions = new DefaultAzureCredentialOptions();
+                defaultAzureCredentialOptions.ManagedIdentityClientId = _config["ManagedCredentialsId"];
+                containerClient = new BlobContainerClient(containerUri,
+                    new DefaultAzureCredential(defaultAzureCredentialOptions));
+            }
             else
             {
                 var blobUri = new BlobUriBuilder(containerUri);
