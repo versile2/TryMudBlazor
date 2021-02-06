@@ -46,8 +46,8 @@ namespace Server.Controllers
             return File(zipStream, "application/octet-stream", "snippet.zip");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post()
+        [HttpPut]
+        public async Task<IActionResult> Put()
         {
             var newSnippetId = NewSnippetId();
             await containerClient.UploadBlobAsync(BlobPath(newSnippetId), Request.Body);

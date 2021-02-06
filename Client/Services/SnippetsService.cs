@@ -113,7 +113,7 @@
 
                 var inputData = new StreamContent(memoryStream);
 
-                var response = await this.httpClient.PostAsync(this.snippetsService, inputData);
+                var response = await this.httpClient.PutAsync(this.snippetsService, inputData);
                 snippetId = await response.Content.ReadAsStringAsync();
             }
 
