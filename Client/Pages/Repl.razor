@@ -1,5 +1,4 @@
-﻿@page "/snippet/{snippetId}"
-@page "/snippet/"
+﻿@page "/snippet/{snippetId?}"
 
 @layout MainLayout
 
@@ -17,15 +16,23 @@
         </MudText>
     </MudAppBar>
 
-    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
+    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible"
+        InvokerId="save-snippet-btn"
+        CodeFiles="@CodeFiles.Values"
+        UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
 
     <div class="trymudblazor-editor">
-        <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
+        <ReplLoader Show="@Loading"
+                    Message="@LoaderText"></ReplLoader>
 
         <div id="user-code-editor-container">
-            <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivate" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreate"></TabManager>
+            <TabManager Tabs="@CodeFileNames"
+                OnTabActivate="@HandleTabActivate"
+                OnTabClose="@HandleTabClose"
+                OnTabCreate="@HandleTabCreate"></TabManager>
 
-            <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent"></CodeEditor>
+            <CodeEditor @ref="@CodeEditorComponent"
+                Code="@CodeEditorContent"></CodeEditor>
         </div>
         <div id="user-page-window-container">
             <iframe id="user-page-window" src="/user-page"></iframe>
