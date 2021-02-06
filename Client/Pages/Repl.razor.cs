@@ -101,6 +101,9 @@
 
         protected override async Task OnInitializedAsync()
         {
+            // Uncomment for debug adapter to have time to connect (known issue)
+            // Otherwise breakpoint will not be hit
+            // await Task.Delay(10000);
             this.PageNotificationsComponent?.Clear();
 
             if (!string.IsNullOrWhiteSpace(this.SnippetId))

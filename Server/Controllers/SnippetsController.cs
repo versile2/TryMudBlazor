@@ -16,8 +16,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Server.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class SnippetsController : ControllerBase
     {
         private readonly IConfiguration _config;
@@ -54,8 +54,8 @@ namespace Server.Controllers
             return File(zipStream, "application/octet-stream", "snippet.zip");
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put()
+        [HttpPost]
+        public async Task<IActionResult> Post()
         {
             var newSnippetId = NewSnippetId();
             await containerClient.UploadBlobAsync(BlobPath(newSnippetId), Request.Body);

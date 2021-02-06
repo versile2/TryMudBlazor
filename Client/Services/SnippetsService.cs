@@ -114,7 +114,7 @@
 
                 var inputData = new StreamContent(memoryStream);
 
-                var response = await this.httpClient.PutAsync(this.snippetsService, inputData);
+                var response = await this.httpClient.PostAsync(this.snippetsService, inputData);
                 snippetId = await response.Content.ReadAsStringAsync();
             }
 
@@ -128,7 +128,7 @@
                 throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
             }
 
-            var reponse = await this.httpClient.GetAsync($"{this.snippetsService}{snippetId}");
+            var reponse = await this.httpClient.GetAsync($"{this.snippetsService}/{snippetId}");
 
             var zipStream = await reponse.Content.ReadAsStreamAsync();
             zipStream.Position = 0;
