@@ -23,18 +23,10 @@ namespace Server.Controllers
         public SnippetsController(IConfiguration config)
         {
             _config = config;
-            var connectionString = _config.GetConnectionString("StorageConnectionString");
-            BlobServiceClient blobServiceClient;
-
-            // AAD Service Principal
-            if (connectionString.StartsWith("https"))
-                blobServiceClient = new BlobServiceClient(new Uri(connectionString), new DefaultAzureCredential());
-
-            // Connection string and token (local devcelopment
-            else
-                blobServiceClient = new BlobServiceClient(connectionString);
-            containerClient = blobServiceClient.GetBlobContainerClient(_config["SnippetsContainer"]);  
+            var containerUri = new Uri(_config["SnippetsContainer"]);
+            containerClient = new BlobContainerClient(containerUri, new DefaultAzureCredential());  
         }
+
         [HttpGet("{snippetId}")]
         public async Task<IActionResult> Get(string snippetId)
         {
