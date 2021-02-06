@@ -22,7 +22,7 @@ namespace Server.Controllers
         public SnippetsController(IConfiguration config)
         {
             _config = config;
-            var connectionString = _config["ConnectionStrings:StorageConnectionString"];
+            var connectionString = _config.GetConnectionString("StorageConnectionString");
             BlobServiceClient blobServiceClient;
 
             // AAD Service Principal
