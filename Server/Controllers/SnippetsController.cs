@@ -23,7 +23,7 @@ namespace Server.Controllers
         public SnippetsController(IConfiguration config)
         {
             _config = config;
-            var containerUri = new Uri(_config["SnippetsContainer"]);
+            var containerUri = new Uri(_config["SnippetsContainerUrl"]);
             containerClient = new BlobContainerClient(containerUri, new DefaultAzureCredential());  
         }
 
