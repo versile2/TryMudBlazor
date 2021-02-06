@@ -23,7 +23,15 @@ namespace Server.Controllers
         {
             _config = config;
             var connectionString = _config["ConnectionStrings:StorageConnectionString"];
-            var blobServiceClient = new BlobServiceClient(connectionString);
+            BlobServiceClient blobServiceClient;
+
+            // AAD Service Principal
+            if (connectionString.StartsWith("https"))
+                blobServiceClient = new BlobServiceClient(new Uri(connectionString));
+
+            // Connection string and token (local devcelopment
+            else
+                blobServiceClient = new BlobServiceClient(connectionString);
             containerClient = blobServiceClient.GetBlobContainerClient(_config["SnippetsContainer"]);  
         }
         [HttpGet("{snippetId}")]
