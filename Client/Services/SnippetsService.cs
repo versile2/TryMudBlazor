@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using BlazorRepl.Client.Models;
     using BlazorRepl.Core;
+    using Microsoft.AspNetCore.Components;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
 
@@ -76,10 +77,10 @@
         private readonly HttpClient httpClient;
         private readonly string snippetsService;
 
-        public SnippetsService(IOptions<SnippetsOptions> snippetsOptions, HttpClient httpClient)
+        public SnippetsService(IOptions<SnippetsOptions> snippetsOptions, HttpClient httpClient, NavigationManager navigationManager)
         {
             this.httpClient = httpClient;
-            this.snippetsService = snippetsOptions.Value.SnippetsService;
+            this.snippetsService = $"{navigationManager.BaseUri}{snippetsOptions.Value.SnippetsService}";
         }
 
         public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
@@ -127,7 +128,7 @@
                 throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
             }
 
-            var reponse = await this.httpClient.GetAsync($"{this.snippetsService}/{snippetId}");
+            var reponse = await this.httpClient.GetAsync($"{this.snippetsService}{snippetId}");
 
             var zipStream = await reponse.Content.ReadAsStreamAsync();
             zipStream.Position = 0;

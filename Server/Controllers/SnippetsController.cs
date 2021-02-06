@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Azure.Identity;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using BlazorRepl.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +26,16 @@ namespace Server.Controllers
         {
             _config = config;
             var containerUri = new Uri(_config["SnippetsContainerUrl"]);
-            containerClient = new BlobContainerClient(containerUri, new DefaultAzureCredential());  
+            string accessKey = _config["SnippetsAccessKey"];
+            if (accessKey == "secret")
+                containerClient = new BlobContainerClient(containerUri, new DefaultAzureCredential());
+            else
+            {
+                var blobUri = new BlobUriBuilder(containerUri);
+                var acccountName = blobUri.AccountName;
+                var key = new StorageSharedKeyCredential(acccountName, accessKey);
+                containerClient = new BlobContainerClient(containerUri, key);
+            }
         }
 
         [HttpGet("{snippetId}")]
