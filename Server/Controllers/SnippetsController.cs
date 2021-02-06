@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using BlazorRepl.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace Server.Controllers
 
             // AAD Service Principal
             if (connectionString.StartsWith("https"))
-                blobServiceClient = new BlobServiceClient(new Uri(connectionString));
+                blobServiceClient = new BlobServiceClient(new Uri(connectionString), new DefaultAzureCredential());
 
             // Connection string and token (local devcelopment
             else
