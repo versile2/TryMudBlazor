@@ -36,20 +36,6 @@
 
         private string TabCreatingDisplayStyle => this.tabCreating ? string.Empty : "display: none;";
 
-        public void Dispose() => this.PageNotificationsComponent?.Dispose();
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (this.shouldFocusNewTabInput)
-            {
-                this.shouldFocusNewTabInput = false;
-
-                await this.newTabInput.FocusAsync();
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
         private Task ActivateTabAsync(int activeIndex)
         {
             if (activeIndex < 0 || activeIndex >= this.Tabs.Count)
@@ -129,6 +115,20 @@
             await this.OnTabCreate.InvokeAsync(normalizedTab);
 
             await this.ActivateTabAsync(newTabIndex);
+        }
+
+        public void Dispose() => this.PageNotificationsComponent?.Dispose();
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (this.shouldFocusNewTabInput)
+            {
+                this.shouldFocusNewTabInput = false;
+
+                await this.newTabInput.FocusAsync();
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
     }
 }
