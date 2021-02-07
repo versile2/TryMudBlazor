@@ -13,6 +13,7 @@ using BlazorRepl.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using static Server.Utilities.SnippetsEncoder;
 
 namespace Server.Controllers
 {
@@ -46,6 +47,7 @@ namespace Server.Controllers
         [HttpGet("{snippetId}")]
         public async Task<IActionResult> Get(string snippetId)
         {
+            snippetId = DecodeSnippetId(snippetId);
             var blob = containerClient.GetBlobClient(BlobPath(snippetId));
             var response = await blob.DownloadAsync();
             var zipStream = new MemoryStream();
@@ -59,7 +61,7 @@ namespace Server.Controllers
         {
             var newSnippetId = NewSnippetId();
             await containerClient.UploadBlobAsync(BlobPath(newSnippetId), Request.Body);
-            return Ok(newSnippetId);
+            return Ok(EncodeSnippetId(newSnippetId));
         }
 
         private static string NewSnippetId()
