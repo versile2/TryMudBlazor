@@ -8,6 +8,7 @@ namespace Tests
     using System.Threading.Tasks;
     using System.Collections.Generic;
     using System;
+    using static Server.Utilities.SnippetsEncoder;
 
     /// <summary>
     /// Please note this is an integration test
@@ -32,7 +33,7 @@ namespace Tests
             var codeFile2 = new CodeFile() { Path = "Test.razor" };
             codeFile2.Content = "<h1>Test</h1>";
             codeFiles.Add(codeFile2);
-            snippetsOptions = Options.Create(new SnippetsOptions(){SnippetsService = "api/snippets/"});
+            snippetsOptions = Options.Create(new SnippetsOptions(){SnippetsService = "api/snippets"});
 
         }
 
@@ -58,6 +59,20 @@ namespace Tests
                 Assert.AreEqual(codeFiles[i].Path, savedCodeFilesList[i].Path);
                 Assert.AreEqual(codeFiles[i].Content,  savedCodeFilesList[i].Content);
             }
+        }
+
+        [Test]
+        public void TestEncodeDecode()
+        {
+            const string snippetId = "2021020540572059";
+            var encoded = EncodeSnippetId(snippetId);
+            Console.WriteLine(encoded);
+            var decoded = DecodeSnippetId(encoded);
+            Console.WriteLine(decoded);
+            Assert.AreEqual(snippetId, decoded);
+            var encoded2 = EncodeSnippetId(snippetId);
+            Console.WriteLine(encoded2);
+            Assert.AreNotEqual(encoded, encoded2);
         }
     }
 }
