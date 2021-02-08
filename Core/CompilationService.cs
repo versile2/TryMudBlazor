@@ -32,7 +32,6 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 @using MudBlazor
-@using MudBlazor.Dialog
 ";
 
         private const string MudBlazorServices = @"
