@@ -67,17 +67,36 @@
 
         public async Task<IEnumerable<CodeFile>> GetSnippetContentAsync(string snippetId)
         {
-            if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
+            if (string.IsNullOrWhiteSpace(snippetId))
             {
                 throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
             }
 
-            var reponse = await this.httpClient.GetAsync($"{this.snippetsService}/{snippetId}");
+            IEnumerable<CodeFile> snippetFiles;
+            if (snippetId.Length != SnippetIdLength)
+            {
+                try
+                {
+                    snippetFiles = snippetId.ToCodeFiles();
+                    var codeFilesValidationError = CodeFilesHelper.ValidateCodeFilesForSnippetCreation(snippetFiles);
+                    if (!string.IsNullOrWhiteSpace(codeFilesValidationError))
+                    {
+                        throw new InvalidOperationException(codeFilesValidationError);
+                    }
+                }
+                catch
+                {
+                    throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
+                }
+            }
+            else
+            {
+                var reponse = await this.httpClient.GetAsync($"{this.snippetsService}/{snippetId}");
+                var zipStream = await reponse.Content.ReadAsStreamAsync();
+                zipStream.Position = 0;
+                snippetFiles = await ExtractSnippetFilesFromZip(zipStream);
+            }
 
-            var zipStream = await reponse.Content.ReadAsStreamAsync();
-            zipStream.Position = 0;
-
-            var snippetFiles = await ExtractSnippetFilesFromZip(zipStream);
             return snippetFiles;
         }
 

@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.IO.Compression;
+    using System.Text;
     using BlazorRepl.Core;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -120,6 +122,30 @@
             }
 
             return null;
+        }
+
+        public static IEnumerable<CodeFile> ToCodeFiles(this string urlEncodedBase64compressedCode)
+        {
+            // uncompress
+            var base64compressedCode = Uri.UnescapeDataString(urlEncodedBase64compressedCode);
+            var bytes = Convert.FromBase64String(base64compressedCode);
+            using (var uncompressed = new MemoryStream())
+            using (var compressedStream = new MemoryStream(bytes))
+            using (var uncompressor = new DeflateStream(compressedStream, CompressionMode.Decompress))
+            {
+                uncompressor.CopyTo(uncompressed);
+                uncompressor.Close();
+                var codeString = Encoding.UTF8.GetString(uncompressed.ToArray());
+                var codeFiles = new List<CodeFile>();
+                var codeElements = codeString.Split((char)31);
+                for (int i = 0; i < codeElements.Length; i += 2)
+                {
+                    var codeFile = new CodeFile() { Path = codeElements[i], Content = codeElements[i + 1] };
+                    codeFiles.Add(codeFile);
+                }
+
+                return codeFiles;
+            }
         }
     }
 }
