@@ -1,9 +1,10 @@
 ﻿<div id="save-snippet-popup"
-     class="toast save-snippets-popup @VisibleClass"
+     class="save-snippets-popup @VisibleClass"
      role="alert"
      aria-live="assertive"
      aria-atomic="true"
      style="@DisplayStyle">
+
     <MudCard Class="pa-3 mt-n1" Elevation="10">
         <MudCardHeader>
             <CardHeaderContent>
@@ -15,6 +16,7 @@
                 <li>Please <span class="font-weight-bold">do NOT include</span> any personal data</li>
                 <li>Please <span class="font-weight-bold">do NOT include</span> any copyrighted content</li>
             </ul>
+
 
             @if (string.IsNullOrWhiteSpace(SnippetLink))
             {
@@ -32,7 +34,7 @@
                 <div class="snippet-link-wrapper">
                     <input type="text" class="form-control" @bind="SnippetLink" readonly="readonly" />
 
-                    <MudButton StartIcon="@Icons.Material.ContentCopy" @onclick="CopyLinkToClipboardAsync"></MudButton>
+                    <MudButton StartIcon="@Icons.Material.Filled.ContentCopy" @onclick="CopyLinkToClipboard"></MudButton>
                 </div>}
 
             <div class="save-snippet-callout"></div>

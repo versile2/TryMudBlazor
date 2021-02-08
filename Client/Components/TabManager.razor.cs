@@ -6,21 +6,16 @@
     using BlazorRepl.Client.Models;
     using BlazorRepl.Client.Services;
     using Microsoft.AspNetCore.Components;
-    using Microsoft.JSInterop;
 
     public partial class TabManager : IDisposable
     {
         private const int DefaultActiveIndex = 0;
-        private const string NewTabInputSelector = "#new-tab-input";
 
         private bool tabCreating;
         private bool shouldFocusNewTabInput;
         private string newTab;
+        private ElementReference newTabInput;
         private string previousInvalidTab;
-        private DotNetObjectReference<TabManager> dotNetInstance;
-
-        [Inject]
-        public IJSRuntime JsRuntime { get; set; }
 
         [Parameter]
         public IList<string> Tabs { get; set; }
@@ -35,13 +30,13 @@
         public EventCallback<string> OnTabCreate { get; set; }
 
         [CascadingParameter]
-        public PageNotifications PageNotificationsComponent { get; set; }
+        private PageNotifications PageNotificationsComponent { get; set; }
 
-        public int ActiveIndex { get; set; } = DefaultActiveIndex;
+        private int ActiveIndex { get; set; } = DefaultActiveIndex;
 
-        public string TabCreatingDisplayStyle => this.tabCreating ? string.Empty : "display: none;";
+        private string TabCreatingDisplayStyle => this.tabCreating ? string.Empty : "display: none;";
 
-        public Task ActivateTabAsync(int activeIndex)
+        private Task ActivateTabAsync(int activeIndex)
         {
             if (activeIndex < 0 || activeIndex >= this.Tabs.Count)
             {
@@ -53,7 +48,7 @@
             return this.OnTabActivate.InvokeAsync(this.Tabs[activeIndex]);
         }
 
-        public async Task CloseTabAsync(int index)
+        private async Task CloseTabAsync(int index)
         {
             if (index < 0 || index >= this.Tabs.Count)
             {
@@ -76,19 +71,19 @@
             }
         }
 
-        public void InitTabCreating()
+        private void InitTabCreating()
         {
             this.tabCreating = true;
             this.shouldFocusNewTabInput = true;
         }
 
-        public void TerminateTabCreating()
+        private void TerminateTabCreating()
         {
             this.tabCreating = false;
             this.newTab = null;
         }
 
-        public async Task CreateTabAsyncInternal()
+        private async Task CreateTabAsync()
         {
             if (string.IsNullOrWhiteSpace(this.newTab))
             {
@@ -106,7 +101,7 @@
                     this.previousInvalidTab = this.newTab;
                 }
 
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabInputSelector);
+                await this.newTabInput.FocusAsync();
                 return;
             }
 
@@ -122,36 +117,15 @@
             await this.ActivateTabAsync(newTabIndex);
         }
 
-        public void Dispose()
-        {
-            this.dotNetInstance?.Dispose();
-            this.PageNotificationsComponent?.Dispose();
-
-            _ = this.JsRuntime.InvokeVoidAsync("App.TabManager.dispose");
-        }
-
-        [JSInvokable]
-        public async Task CreateTabAsync()
-        {
-            await this.CreateTabAsyncInternal();
-
-            this.StateHasChanged();
-        }
+        public void Dispose() => this.PageNotificationsComponent?.Dispose();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                this.dotNetInstance = DotNetObjectReference.Create(this);
-
-                await this.JsRuntime.InvokeVoidAsync("App.TabManager.init", "#new-tab-input", this.dotNetInstance);
-            }
-
             if (this.shouldFocusNewTabInput)
             {
                 this.shouldFocusNewTabInput = false;
 
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabInputSelector);
+                await this.newTabInput.FocusAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);

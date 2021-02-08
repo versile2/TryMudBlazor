@@ -32,7 +32,6 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 @using MudBlazor
-@using MudBlazor.Dialog
 ";
 
         private const string MudBlazorServices = @"
@@ -57,9 +56,11 @@
         {
             var basicReferenceAssemblyRoots = new[]
             {
-                typeof(AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
+                typeof(Console).Assembly, // System.Console
+                typeof(Uri).Assembly, // System.Private.Uri
+                typeof(AssemblyTargetedPatchBandAttribute).Assembly, // System.Private.CoreLib
                 typeof(NavLink).Assembly, // Microsoft.AspNetCore.Components.Web
-                typeof(IQueryable).Assembly, // System.Linq
+                typeof(IQueryable).Assembly, // System.Linq.Expressions
                 typeof(HttpClientJsonExtensions).Assembly, // System.Net.Http.Json
                 typeof(HttpClient).Assembly, // System.Net.Http
                 typeof(IJSRuntime).Assembly, // Microsoft.JSInterop
@@ -89,14 +90,22 @@
                 "BlazorRepl.UserComponents",
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                new CSharpCompilationOptions(
+                    OutputKind.DynamicallyLinkedLibrary,
+                    optimizationLevel: OptimizationLevel.Release,
+                    concurrentBuild: false,
+                    //// Warnings CS1701 and CS1702 are disabled when compiling in VS too
+                    specificDiagnosticOptions: new[]
+                    {
+                        new KeyValuePair<string, ReportDiagnostic>("CS1701", ReportDiagnostic.Suppress),
+                        new KeyValuePair<string, ReportDiagnostic>("CS1702", ReportDiagnostic.Suppress),
+                    }));
 
             cSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
         }
 
         public async Task<CompileToAssemblyResult> CompileToAssemblyAsync(
             ICollection<CodeFile> codeFiles,
-            string preset,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
             if (codeFiles == null)
@@ -112,14 +121,16 @@
             return result;
         }
 
-        private static async Task<IDictionary<string, Stream>> GetStreamFromHttpAsync(HttpClient httpClient, IEnumerable<string> assemblyNames)
+        private static async Task<IDictionary<string, Stream>> GetStreamFromHttpAsync(
+            HttpClient httpClient,
+            IEnumerable<string> assemblyNames)
         {
             var streams = new ConcurrentDictionary<string, Stream>();
 
             await Task.WhenAll(
                 assemblyNames.Select(async assemblyName =>
                 {
-                    var result = await httpClient.GetAsync($"/_framework/_bin/{assemblyName}.dll");
+                    var result = await httpClient.GetAsync($"/_framework/{assemblyName}.dll");
 
                     result.EnsureSuccessStatusCode();
 
@@ -129,17 +140,18 @@
             return streams;
         }
 
-        private static CompileToAssemblyResult CompileToAssembly(ICollection<CompileToCSharpResult> cSharpResults)
+        private static CompileToAssemblyResult CompileToAssembly(IReadOnlyList<CompileToCSharpResult> cSharpResults)
         {
             if (cSharpResults.Any(r => r.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error)))
             {
                 return new CompileToAssemblyResult { Diagnostics = cSharpResults.SelectMany(r => r.Diagnostics).ToList() };
             }
 
-            var syntaxTrees = new List<SyntaxTree>(cSharpResults.Count);
-            foreach (var cSharpResult in cSharpResults)
+            var syntaxTrees = new SyntaxTree[cSharpResults.Count];
+            for (var i = 0; i < cSharpResults.Count; i++)
             {
-                syntaxTrees.Add(CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions));
+                var cSharpResult = cSharpResults[i];
+                syntaxTrees[i] = CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions, cSharpResult.FilePath);
             }
 
             var finalCompilation = baseCompilation.AddSyntaxTrees(syntaxTrees);
@@ -188,7 +200,7 @@
                 Encoding.UTF8.GetBytes(fileContent.TrimStart()));
         }
 
-        private async Task<ICollection<CompileToCSharpResult>> CompileToCSharpAsync(
+        private async Task<IReadOnlyList<CompileToCSharpResult>> CompileToCSharpAsync(
             ICollection<CodeFile> codeFiles,
             Func<string, Task> updateStatusFunc)
         {
@@ -196,20 +208,36 @@
             var projectEngine = this.CreateRazorProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
-            var declarations = new List<CompileToCSharpResult>(codeFiles.Count);
+            var declarations = new CompileToCSharpResult[codeFiles.Count];
+            var index = 0;
             foreach (var codeFile in codeFiles)
             {
-                var projectItem = CreateRazorProjectItem(codeFile.Path, MudBlazorServices + codeFile.Content);
-
-                var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
-                var cSharpDocument = codeDocument.GetCSharpDocument();
-
-                declarations.Add(new CompileToCSharpResult
+                if (codeFile.Type == CodeFileType.Razor)
                 {
-                    ProjectItem = projectItem,
-                    Code = cSharpDocument.GeneratedCode,
-                    Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                });
+                    var projectItem = CreateRazorProjectItem(codeFile.Path, MudBlazorServices + codeFile.Content);
+
+                    var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
+                    var cSharpDocument = codeDocument.GetCSharpDocument();
+
+                    declarations[index] = new CompileToCSharpResult
+                    {
+                        FilePath = codeFile.Path,
+                        ProjectItem = projectItem,
+                        Code = cSharpDocument.GeneratedCode,
+                        Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+                    };
+                }
+                else
+                {
+                    declarations[index] = new CompileToCSharpResult
+                    {
+                        FilePath = codeFile.Path,
+                        Code = codeFile.Content,
+                        Diagnostics = Enumerable.Empty<CompilationDiagnostic>(), // Will actually be evaluated later
+                    };
+                }
+
+                index++;
             }
 
             // Result of doing 'temp' compilation
@@ -225,18 +253,29 @@
 
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
-            var results = new List<CompileToCSharpResult>(codeFiles.Count);
-            foreach (var declaration in declarations)
+            var results = new CompileToCSharpResult[declarations.Length];
+            for (index = 0; index < declarations.Length; index++)
             {
-                var codeDocument = projectEngine.Process(declaration.ProjectItem);
-                var cSharpDocument = codeDocument.GetCSharpDocument();
+                var declaration = declarations[index];
+                var isRazorDeclaration = declaration.ProjectItem != null;
 
-                results.Add(new CompileToCSharpResult
+                if (isRazorDeclaration)
                 {
-                    ProjectItem = declaration.ProjectItem,
-                    Code = cSharpDocument.GeneratedCode,
-                    Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                });
+                    var codeDocument = projectEngine.Process(declaration.ProjectItem);
+                    var cSharpDocument = codeDocument.GetCSharpDocument();
+
+                    results[index] = new CompileToCSharpResult
+                    {
+                        FilePath = declaration.FilePath,
+                        ProjectItem = declaration.ProjectItem,
+                        Code = cSharpDocument.GeneratedCode,
+                        Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+                    };
+                }
+                else
+                {
+                    results[index] = declaration;
+                }
             }
 
             return results;
