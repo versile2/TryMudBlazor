@@ -6,6 +6,7 @@
     using System.IO.Compression;
     using System.Text;
     using BlazorRepl.Core;
+    using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.CodeAnalysis.CSharp;
 
     public static class CodeFilesHelper
@@ -127,8 +128,7 @@
         public static IEnumerable<CodeFile> ToCodeFiles(this string urlEncodedBase64compressedCode)
         {
             // uncompress
-            var base64compressedCode = Uri.UnescapeDataString(urlEncodedBase64compressedCode);
-            var bytes = Convert.FromBase64String(base64compressedCode);
+            var bytes = WebEncoders.Base64UrlDecode(urlEncodedBase64compressedCode);
             using (var uncompressed = new MemoryStream())
             using (var compressedStream = new MemoryStream(bytes))
             using (var uncompressor = new DeflateStream(compressedStream, CompressionMode.Decompress))
