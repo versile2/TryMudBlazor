@@ -14,3 +14,6 @@ Huge thanks to the Authors of Blazor REPL:
 Adaptation for MudBlazor and general web interface overhaul:
 - [Meinrad Recheis](https://github.com/henon)
 - [Jonny Larsson](https://github.com/Garderoben)
+
+Making a custom backend for MudBlazor snippets:
+- [Mike Surcouf](https://github.com/mikes-gh)
