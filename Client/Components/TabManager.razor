@@ -1,43 +1,36 @@
-﻿<div class="mud-tabs">
-    <div class="mud-tabs-toolbar">
-        <div class="mud-tabs-toolbar-inner">
-            <div class="mud-tabs-toolbar-content">
-                <div class="mud-tabs-toolbar-wrapper tabs-wrapper">
+﻿<div class="try-mud-tabs">
+    <div class="try-mud-tabs-toolbar">
+        <div class="try-mud-tabs-toolbar-inner">
+            <div class="try-mud-tabs-toolbar-content">
+                <div class="try-mud-tabs-toolbar-wrapper tabs-wrapper">
                     @if (Tabs != null)
                     {
                         @for (var i = 0; i < Tabs.Count; i++)
                         {
                             var tab = Tabs[i];
-                            var activeClass = i == ActiveIndex ? "mud-tab-active" : string.Empty;
+                            var activeClass = i == ActiveIndex ? "try-mud-tab-active" : string.Empty;
                             var currentIndex = i;
 
-                            <div class="mud-tab @activeClass mud-ripple" @onclick="@(() => ActivateTabAsync(currentIndex))" title="@tab">
+                            <div class="try-mud-tab @activeClass mud-ripple" @onclick="@(() => ActivateTabAsync(currentIndex))" title="@tab">
                                 @tab
                                 @if (currentIndex != DefaultActiveIndex)
                                 {
-                                    <svg class="mud-svg-icon-root mud-color-text-inherit mud-icon-size-small mud-tab-icon-text-left" focusable="false" viewBox="0 0 24 24" aria-hidden="true"  @onclick="@(() => CloseTabAsync(currentIndex))" @onclick:stopPropagation>
-                                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
-                                    </svg>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Size="Size.Small" OnClick="@(() => CloseTabAsync(currentIndex))" Class="ml-4 mr-n2" />
                                 }
                             </div>
                         }
                     }
 
-                    <div class="mud-tab" style="@TabCreatingDisplayStyle">
-                        <form @onsubmit="@CreateTabAsync" autocomplete="off">
-                            <input class="mud-tab-input"
+                    <div class="try-mud-tab pa-0 px-1" style="@TabCreatingDisplayStyle">
+                        <form @onsubmit="@CreateTabAsync" autocomplete="off" class="try-mud-tab-form-input">
+                            <input class="try-mud-tab-input"
                                 @ref="newTabInput"
                                 @bind="@newTab"
                                 @onblur="@CreateTabAsync"
-                                placeholder=".razor OR .cs" />
+                                placeholder=" .razor OR .cs" />
                         </form>
                     </div>
-
-                    <div class="mud-tab mud-ripple" @onclick="@InitTabCreating">
-                        <svg class="mud-icon-root mud-svg-icon mud-color-text-inherit mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-                        </svg>
-                    </div>
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" @onclick="@InitTabCreating" Class="rounded-0" Style="color:#fff; padding: 6px 12px;"/>
                 </div>
             </div>
         </div>

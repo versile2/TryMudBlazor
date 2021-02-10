@@ -101,18 +101,43 @@
     padding-right: 12px;
 }
 
-.mud-tabs {
+.try-mud-tabs {
     position: absolute;
     top: 48px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.mud-tabs-toolbar {
-    background-color: #594ae2;
+.try-mud-tabs-toolbar {
+    z-index: 20;
+    position: relative;
+    background-color: rgb(119,107,231);
 }
 
+.try-mud-tabs-toolbar-inner {
+    display: flex;
+    min-height: 38px !important;
+}
 
-.mud-tab {
+.try-mud-tabs-toolbar-content {
+    width: 100%;
+    flex: 1 1 auto;
+    display: inline-block;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    .try-mud-tabs-toolbar-content .try-mud-tabs-toolbar-wrapper {
+        width: max-content;
+        position: inherit;
+        display: flex;
+        transition: .3s cubic-bezier(.25,.8,.5,1);
+    }
+
+
+.try-mud-tab {
     color: #fff;
     width: auto;
     min-width: auto !important;
@@ -121,27 +146,59 @@
     min-height: 38px !important;
     font-size: 14px;
     font-weight: 400;
+    max-width: 360px;
+    display: inline-flex;
+    padding: 6px 12px;
+    flex-shrink: 0;
+    line-height: 1.75;
+    user-select: none;
+    white-space: normal;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
+
+    .try-mud-tab:hover {
+        cursor: pointer;
+        background-color: #594AE2;
+    }
 
 .mud-tab-icon-text-left{
     margin-left: 8px;
 }
 
-.mud-tabs-toolbar-inner {
-    min-height: 38px !important;
+.try-mud-tab-form-input {
+    line-height: 2;
+    height: 38px;
 }
+
+.try-mud-tab-input {
+    padding: 5px 10px;
+    border: none !important;
+    border-radius: 0px !important;
+    outline: none !important;
+}
+
+    .try-mud-tab-input:focus {
+        border: none !important;
+        border-radius: 0px !important;
+        outline: none !important;
+    }
+
+
 
 .mud-appbar-color-dark {
     background-color: #444;
     color: #fff;
 }
 
-.mud-tab-active {
+.try-mud-tab-active {
     color: #444 !important;
     background-color: #fff;
 }
 
-    .mud-tab-active:hover {
+    .try-mud-tab-active:hover {
         cursor: pointer;
         background-color: #f5f5f5 !important;
     }
@@ -491,19 +548,6 @@
     display: flex;
     padding: 3px 10px;
     height: 100%;
-}
-
-.mud-tab-input {
-    padding: 5px 10px;
-    border: none !important;
-    border-radius: 0px !important;
-    outline: none !important;
-}
-
-.mud-tab-input:focus {
-    border: none !important;
-    border-radius: 0px !important;
-    outline:none !important;
 }
 
 .tab-name-wrapper {
