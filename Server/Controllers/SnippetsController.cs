@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
-using BlazorRepl.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using static Server.Utilities.SnippetsEncoder;
 
 namespace Server.Controllers

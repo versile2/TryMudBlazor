@@ -18,6 +18,11 @@
     <ProjectReference Include="..\Core\BlazorRepl.Core.csproj" />
   </ItemGroup>
 
+  <!--Used for the periodic table examples-->
+  <ItemGroup>
+    <EmbeddedResource Include="ExampleDataServices\Elements.json" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>

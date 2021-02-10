@@ -1,0 +1,37 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Text.Json;
+
+namespace Server.ExampleDataServices
+{
+    internal static class AmericanStates
+    {
+        private const States = new string[]
+        {
+            "Alabama", "Alaska", "American Samoa", "Arizona",
+            "Arkansas", "California", "Colorado", "Connecticut",
+            "Delaware", "District of Columbia", "Federated States of Micronesia",
+            "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+            "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+            "Louisiana", "Maine", "Marshall Islands", "Maryland",
+            "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+            "Missouri", "Montana", "Nebraska", "Nevada",
+            "New Hampshire", "New Jersey", "New Mexico", "New York",
+            "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+            "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+            "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+            "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+            "Washington", "West Virginia", "Wisconsin", "Wyoming",
+        };
+
+        internal static IEnumerable<string> GetStates(string value = string.Empty)
+        {
+            // if text is null or empty, show complete list
+            if (string.IsNullOrEmpty(value))
+                return States;
+            return States.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        }
+    }
