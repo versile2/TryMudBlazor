@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Text.Json;
 
 namespace Server.ExampleDataServices
 {
     internal static class AmericanStates
     {
-        private const States = new string[]
+        private static readonly string[] States =
         {
             "Alabama", "Alaska", "American Samoa", "Arizona",
             "Arkansas", "California", "Colorado", "Connecticut",
@@ -27,7 +24,7 @@ namespace Server.ExampleDataServices
             "Washington", "West Virginia", "Wisconsin", "Wyoming",
         };
 
-        internal static IEnumerable<string> GetStates(string value = string.Empty)
+        internal static IEnumerable<string> GetStates(string value = "")
         {
             // if text is null or empty, show complete list
             if (string.IsNullOrEmpty(value))
@@ -35,3 +32,4 @@ namespace Server.ExampleDataServices
             return States.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         }
     }
+}
