@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Server.ExampleDataServices
+namespace MudBlazor.ExampleData
 {
-    internal static class AmericanStates
+    public static class AmericanStates
     {
         private static readonly string[] States =
         {
@@ -24,7 +24,7 @@ namespace Server.ExampleDataServices
             "Washington", "West Virginia", "Wisconsin", "Wyoming",
         };
 
-        internal static IEnumerable<string> GetStates(string value = "")
+        public static IEnumerable<string> GetStates(string value = "")
         {
             // if text is null or empty, show complete list
             if (string.IsNullOrEmpty(value))

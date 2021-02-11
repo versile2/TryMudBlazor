@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Server.ExampleDataServices;
+using MudBlazor.ExampleData;
 
 namespace Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("wasm/webapi/[controller]")]
+    [Route("webapi/[controller]")]
     [ApiController]
     public class AmericanStatesController : ControllerBase
     {

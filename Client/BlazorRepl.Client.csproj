@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\BlazorRepl.Core.csproj" />
+    <ProjectReference Include="..\MudBlazor.ExampleData\MudBlazor.ExampleData.csproj" />
   </ItemGroup>
 
 </Project>

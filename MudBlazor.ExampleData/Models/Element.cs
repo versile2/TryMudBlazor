@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Server.ExampleDataServices
+namespace MudBlazor.ExampleData.Models
 {
     public class Element
     {

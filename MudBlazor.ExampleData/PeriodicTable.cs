@@ -4,20 +4,32 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.Json;
+using MudBlazor.ExampleData.Models;
 
-namespace Server.ExampleDataServices
+namespace MudBlazor.ExampleData
 {
-    internal static class PeriodicTable
+    public static class PeriodicTable
     {
         private static IList<Element> s_elements = null;
         private static DateTime s_loadTime;
 
-        internal static async Task<IEnumerable<Element>> GetElementsAsync()
+        public static IEnumerable<Element> GetElements()
+        {
+            return GetElements(string.Empty);
+        }
+
+        public static IEnumerable<Element> GetElements(string search)
+        {
+            var task = GetElementsAsync(search);
+            return task.GetAwaiter().GetResult();
+        }
+
+        public static async Task<IEnumerable<Element>> GetElementsAsync()
         {
             return await GetElementsAsync(string.Empty);
         }
 
-        internal static async Task<IEnumerable<Element>> GetElementsAsync(string search)
+        public static async Task<IEnumerable<Element>> GetElementsAsync(string search)
         {
             if (s_elements == null || s_loadTime.Add(TimeSpan.FromMinutes(5)) < DateTime.Now)
             {
@@ -42,7 +54,7 @@ namespace Server.ExampleDataServices
             s_elements = new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTable).Assembly, "Elements.json");
             using var stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key);
-            var table = await JsonSerializer.DeserializeAsync<Table>(stream, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var table = await JsonSerializer.DeserializeAsync<Table>(stream, new JsonSerializerOptions(){ PropertyNameCaseInsensitive = true });
             foreach (var elementGroup in table.ElementGroups)
             {
                 s_elements = s_elements.Concat(elementGroup.Elements).ToList();
@@ -51,7 +63,7 @@ namespace Server.ExampleDataServices
             return s_elements;
         }
 
-        private static string GetResourceKey(Assembly assembly, string embeddedFile)
+        public static string GetResourceKey(Assembly assembly, string embeddedFile)
         {
             return assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains(embeddedFile));
         }

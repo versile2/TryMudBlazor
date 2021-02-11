@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Server.ExampleDataServices
+namespace MudBlazor.ExampleData.Models
 {
     public class Table
     {

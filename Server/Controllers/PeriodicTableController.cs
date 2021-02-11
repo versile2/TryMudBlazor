@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.ExampleDataServices;
+using MudBlazor.ExampleData;
+using MudBlazor.ExampleData.Models;
 
 namespace Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("wasm/webapi/[controller]")]
+    [Route("webapi/[controller]")]
     [ApiController]
     public class PeriodicTableController : ControllerBase
     {
