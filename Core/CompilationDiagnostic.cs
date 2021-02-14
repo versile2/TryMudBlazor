@@ -34,6 +34,11 @@
                 // Make it 1-based. Skip the main component where we add @page directive line
                 line++;
             }
+            else
+            {
+                // Offset for MudProviders
+                line -= 4;
+            }
 
             return new CompilationDiagnostic
             {
