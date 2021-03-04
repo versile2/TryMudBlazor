@@ -3,7 +3,9 @@
 .mud-theme-transparent {
    background-color: #fafafa !important;
 }
-
+.mud-toolbar{
+    flex-wrap: wrap;
+}
 .mudblazor-brand {
     font-size: 1.7rem;
     font-weight: 300;
@@ -412,6 +414,19 @@
    overflow:hidden;
 }
 @media (max-width: 767.98px) {
+    .mudblazor-brand {
+        justify-content: center;
+        display: flex;
+        width:100%;
+    }
+    .mud-toolbar-centered-links {
+        justify-content: center;
+        display: flex;
+        width: 100%;
+    }
+    .mud-toolbar.mud-toolbar-appbar {
+        height: 84px;
+    }
     .mud-typography-h1 {
         font-size: 4rem;
     }
@@ -437,6 +452,7 @@
 }
 
 @media (max-width: 576px) {
+    
     .app-loader {
         left: 40%;
     }
@@ -459,6 +475,7 @@
     .user-page-loader {
         left: 46%;
     }
+    
 }
 
 /* Save Snippet Popup */
