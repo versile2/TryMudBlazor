@@ -1,4 +1,11 @@
 ﻿/* MudBlaozr */
+/*override*/
+.mud-theme-transparent {
+   background-color: #fafafa !important;
+}
+.mud-toolbar{
+    flex-wrap: wrap;
+}
 .mudblazor-brand {
     font-size: 1.7rem;
     font-weight: 300;
@@ -25,7 +32,8 @@
     }
 
 .mudblazor-svg {
-    width: 500px;
+    width:100%;
+    max-width: 500px;
     flex-shrink: 0;
     /*-webkit-filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 1));*/
     filter: drop-shadow(11px 15px 7px rgba(0,0,0,.2));
@@ -402,8 +410,26 @@
     border: 1px solid #ccc;
     border-top: none;
 }
-
+.mud-typography-h1{
+   overflow:hidden;
+}
 @media (max-width: 767.98px) {
+    .mudblazor-brand {
+        justify-content: center;
+        display: flex;
+        width:100%;
+    }
+    .mud-toolbar-centered-links {
+        justify-content: center;
+        display: flex;
+        width: 100%;
+    }
+    .mud-toolbar.mud-toolbar-appbar {
+        height: 84px;
+    }
+    .mud-typography-h1 {
+        font-size: 4rem;
+    }
     .main .top-row:not(.auth) {
         display: none;
     }
@@ -426,10 +452,16 @@
 }
 
 @media (max-width: 576px) {
+    
     .app-loader {
         left: 40%;
     }
-
+    .trymudblazor-paper{
+        padding:30px 40px;
+    }
+    .mud-typography-h1 {
+        font-size: 2.5rem;
+    }
     .user-page-loader {
         left: 40%;
     }
@@ -440,9 +472,13 @@
         left: 46%;
     }
 
+    .mud-typography-h1 {
+        font-size:4.6rem;
+    }
     .user-page-loader {
         left: 46%;
     }
+    
 }
 
 /* Save Snippet Popup */
