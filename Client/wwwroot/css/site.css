@@ -403,8 +403,13 @@
     border: 1px solid #ccc;
     border-top: none;
 }
-
+.mud-typography-h1{
+   overflow:hidden;
+}
 @media (max-width: 767.98px) {
+    .mud-typography-h1 {
+        font-size: 4rem;
+    }
     .main .top-row:not(.auth) {
         display: none;
     }
@@ -430,7 +435,9 @@
     .app-loader {
         left: 40%;
     }
-
+    .mud-typography-h1 {
+        font-size: 2.5rem;
+    }
     .user-page-loader {
         left: 40%;
     }
@@ -441,6 +448,9 @@
         left: 46%;
     }
 
+    .mud-typography-h1 {
+        font-size:4.6rem;
+    }
     .user-page-loader {
         left: 46%;
     }
