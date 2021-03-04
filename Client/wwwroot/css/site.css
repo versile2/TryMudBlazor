@@ -456,6 +456,9 @@
     .app-loader {
         left: 40%;
     }
+    .trymudblazor-paper{
+        padding:30px 40px;
+    }
     .mud-typography-h1 {
         font-size: 2.5rem;
     }
