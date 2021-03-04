@@ -40,9 +40,12 @@
         </div>
     </div>
 </div>
-<div class="trymudblazor-errorlist">
-    <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"></ErrorList>
-</div>
+@if (Diagnostics?.Count() > 0)
+{
+    <div class="trymudblazor-errorlist">
+      <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"/>
+    </div>
+}
 
 @code
 {
