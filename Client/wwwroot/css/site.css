@@ -1,4 +1,9 @@
 ﻿/* MudBlaozr */
+/*override*/
+.mud-theme-transparent {
+   background-color: #fafafa !important;
+}
+
 .mudblazor-brand {
     font-size: 1.7rem;
     font-weight: 300;
