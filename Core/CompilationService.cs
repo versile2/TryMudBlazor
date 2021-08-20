@@ -66,6 +66,7 @@
                 typeof(IJSRuntime).Assembly, // Microsoft.JSInterop
                 typeof(RequiredAttribute).Assembly, // System.ComponentModel.Annotations
                 typeof(MudBlazor.MudButton).Assembly, // MudBlazor
+                typeof(FluentValidation.AbstractValidator<>).Assembly,
             };
 
             var assemblyNames = basicReferenceAssemblyRoots
