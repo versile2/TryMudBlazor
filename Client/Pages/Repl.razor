@@ -2,62 +2,29 @@
 
 @layout MainLayout
 
-<div class="trymudblazor-repl">
-    <MudAppBar Elevation="1" Dense="true" Color="Color.Primary" Class="repl-navbar">
+<div class="try-layout">
+    <MudAppBar Elevation="1" Dense="true" Color="Color.Primary" Fixed="false" Class="repl-navbar">
         <MudLink Style="color:#fff !important;" Class="mr-5" Href="/">TryMudBlazor</MudLink>
-        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.Filled.PlayCircleOutline">
-            Run
-        </MudButton>
-        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Filled.Save">
-            Save
-        </MudButton>
-        <MudText Typo="Typo.body2" Class="ml-10">
-            MudBlazor @Version
-        </MudText>
+        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.Filled.PlayCircleOutline">Run</MudButton>
+        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+        <MudText Typo="Typo.body2" Class="ml-10">MudBlazor @Version</MudText>
     </MudAppBar>
-
-    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible"
-        InvokerId="save-snippet-btn"
-        CodeFiles="@CodeFiles.Values"
-        UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
-
-    <div class="trymudblazor-editor">
-        <ReplLoader Show="@Loading"
-                    Message="@LoaderText"></ReplLoader>
-
+    <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
+    <div class="try-editor">
+        <MudOverlay Visible="Loading" Absolute="true" DarkBackground="true">
+            <MudText Typo="Typo.h4" Class="white-text"> @LoaderText</MudText>
+        </MudOverlay>
         <div id="user-code-editor-container">
-            <TabManager Tabs="@CodeFileNames"
-                OnTabActivate="@HandleTabActivate"
-                OnTabClose="@HandleTabClose"
-                OnTabCreate="@HandleTabCreate"></TabManager>
-
-            <CodeEditor @ref="@CodeEditorComponent"
-                Code="@CodeEditorContent"
-                CodeFileType="@CodeFileType"></CodeEditor>
+            <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivate" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreate" />
+            <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent" CodeFileType="@CodeFileType" />
         </div>
         <div id="user-page-window-container">
             <iframe id="user-page-window" src="/user-page"></iframe>
         </div>
     </div>
+    <MudAppBar Bottom="true" Fixed="false" Color="Color.Info" Elevation="0" Class="try-errorlist">
+        <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics" />
+    </MudAppBar>
 </div>
-@if (Diagnostics?.Count() > 0)
-{
-    <div class="trymudblazor-errorlist">
-      <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"/>
-    </div>
-}
-
-@code
-{
-    string Version
-    {
-        get
-        {
-            var v= typeof(MudText).Assembly.GetName().Version;
-            return $"v{v.Major}.{v.Minor}.{v.Build}";
-        }
-    }
-}
-    
 
 

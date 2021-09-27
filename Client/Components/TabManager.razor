@@ -1,17 +1,17 @@
-﻿<div class="try-mud-tabs">
-    <div class="try-mud-tabs-toolbar">
-        <div class="try-mud-tabs-toolbar-inner">
-            <div class="try-mud-tabs-toolbar-content">
-                <div class="try-mud-tabs-toolbar-wrapper tabs-wrapper">
+﻿<div class="try-tabs">
+    <div class="try-tabs-toolbar">
+        <div class="try-tabs-toolbar-inner">
+            <div class="try-tabs-toolbar-content">
+                <div class="try-tabs-toolbar-wrapper tabs-wrapper">
                     @if (Tabs != null)
                     {
                         @for (var i = 0; i < Tabs.Count; i++)
                         {
                             var tab = Tabs[i];
-                            var activeClass = i == ActiveIndex ? "try-mud-tab-active" : string.Empty;
+                            var activeClass = i == ActiveIndex ? "try-tab-active" : string.Empty;
                             var currentIndex = i;
 
-                            <div class="try-mud-tab @activeClass mud-ripple" @onclick="@(() => ActivateTabAsync(currentIndex))" title="@tab">
+                            <div class="try-tab @activeClass mud-ripple" @onclick="@(() => ActivateTabAsync(currentIndex))" title="@tab">
                                 @tab
                                 @if (currentIndex != DefaultActiveIndex)
                                 {
@@ -21,9 +21,9 @@
                         }
                     }
 
-                    <div class="try-mud-tab pa-0 px-1" style="@TabCreatingDisplayStyle">
-                        <form @onsubmit="@CreateTabAsync" autocomplete="off" class="try-mud-tab-form-input">
-                            <input class="try-mud-tab-input"
+                    <div class="try-tab pa-0 px-1" style="@TabCreatingDisplayStyle">
+                        <form @onsubmit="@CreateTabAsync" autocomplete="off" class="try-tab-form-input">
+                            <input class="try-tab-input"
                                 @ref="newTabInput"
                                 @bind="@newTab"
                                 @onblur="@CreateTabAsync"

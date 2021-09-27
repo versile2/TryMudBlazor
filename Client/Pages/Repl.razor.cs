@@ -11,6 +11,7 @@
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
+    using MudBlazor;
 
     public partial class Repl : IDisposable
     {
@@ -58,6 +59,15 @@
         private string LoaderText { get; set; }
 
         private bool Loading { get; set; }
+
+        private string Version
+        {
+            get
+            {
+                var v = typeof(MudText).Assembly.GetName().Version;
+                return $"v{v.Major}.{v.Minor}.{v.Build}";
+            }
+        }
 
         [JSInvokable]
         public async Task TriggerCompileAsync()

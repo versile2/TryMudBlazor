@@ -1,19 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider Theme="TryMudBlazor" />
+<MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="mud-main-content mudblazor-main-content">
-    <PageNotifications @ref="@PageNotificationsComponent"></PageNotifications>
-    <CascadingValue Value="@PageNotificationsComponent">
-        @Body
-    </CascadingValue>
-</div>
-
-@code {
-    MudTheme TryMudBlazor = new MudTheme()
-    {
-        Palette = { Background = "#fafafa" },
-    };
-}
+<PageNotifications @ref="@PageNotificationsComponent"></PageNotifications>
+<CascadingValue Value="@PageNotificationsComponent">
+    @Body
+</CascadingValue>

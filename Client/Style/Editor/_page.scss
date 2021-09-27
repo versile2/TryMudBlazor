@@ -1,0 +1,33 @@
+﻿body {
+    overflow: hidden;
+}
+
+.try-layout{
+    .try-editor{
+        display: flex;
+        position: relative;
+        .code-editor {
+            height: 100%;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    }
+    .try-save-snippet{
+        position: absolute;
+        top: 55px;
+        left: 125px;
+        z-index: 100;
+    }
+    .try-errorlist{
+        height: 32px;
+        bottom: 0;
+        position: absolute;
+    }
+    .gutter.gutter-horizontal {
+        cursor: ew-resize;
+        background-color: #ccc;
+    }
+    .minimap {
+        display: none;
+    }
+}
