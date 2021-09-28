@@ -81,8 +81,11 @@
         height: 24px;
         bottom: 0;
         position: absolute;
-        background-color: #2c2c2c !important;
-        color: #e0e0e0 !important;
+
+        &.mud-theme-inherit{
+            background-color: #2c2c2c !important;
+            color: #e0e0e0 !important;
+        }
 
         .mud-toolbar{
             padding-left: 6px;
@@ -129,5 +132,11 @@
     }
     .invisible.scrollbar.horizontal.fade, .visible.scrollbar.horizontal{
         height: 8px !important;
+    }
+
+    .try-mudblazor-version{
+        font-family: consolas;
+        font-size: 14px;
+        text-transform: lowercase;
     }
 }
