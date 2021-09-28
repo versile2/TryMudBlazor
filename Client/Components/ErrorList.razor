@@ -1,54 +1,33 @@
-﻿<div class="toast show error-list" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-        <strong style="margin-right: auto; font-weight: bold">Error List</strong>
-        <span>@ErrorsCount errors / @WarningsCount warnings</span>
-        <button type="button"
-                style="margin-left: 0.5rem; margin-bottom: 0.25rem"
-                class="close mt-1 toggle-error-list-btn"
-                data-dismiss="toast"
-                aria-label="Toggle Diagnostics"
-                @onclick="@ToggleDiagnosticsAsync">
-
-            @if (ShowIcon)
-            {
-                @if (Show)
+﻿
+@if (Show && Diagnostics != null && Diagnostics.Any())
+{
+    <div class="try-diagnostics">
+        <MudSimpleTable Elevation="0" Square="true">
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>File</th>
+                    <th>Line</th>
+                    <th>
+                        <MudIconButton Class="rounded-0 pa-2" OnClick="@ToggleDiagnosticsAsync" Icon="@Icons.Material.Outlined.ExpandMore" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var diagnostic in Diagnostics)
                 {
-                    <i class="icon-circle-down"></i>
-                }
-                else
-                {
-                    <i class="icon-circle-up"></i>
-                }
-            }
-        </button>
-    </div>
-
-    @if (Show && Diagnostics != null && Diagnostics.Any())
-    {
-        <div class="toast-body">
-            <table class="table table-borderless">
-                <thead>
                     <tr>
-                        <th scope="col">Severity</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">File</th>
-                        <th scope="col">Line</th>
+                        <td>@diagnostic.Severity</td>
+                        <td>@diagnostic.Code</td>
+                        <td>@diagnostic.Description</td>
+                        <td>@diagnostic.File</td>
+                        <td colspan="2">@diagnostic.Line</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var diagnostic in Diagnostics)
-                    {
-                        <tr>
-                            <td>@diagnostic.Severity</td>
-                            <td>@diagnostic.Code</td>
-                            <td>@diagnostic.Description</td>
-                            <td>@diagnostic.File</td>
-                            <td>@diagnostic.Line</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                }
+            </tbody>
+        </MudSimpleTable>
+    </div>
+}
+

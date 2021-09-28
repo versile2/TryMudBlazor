@@ -10,6 +10,7 @@
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
+    using Microsoft.CodeAnalysis;
     using Microsoft.JSInterop;
     using MudBlazor;
 
@@ -54,11 +55,23 @@
 
         private IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
 
+        private int ErrorsCount => this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
+
+        private int WarningsCount => this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
+
         private bool AreDiagnosticsShown { get; set; }
 
         private string LoaderText { get; set; }
 
         private bool Loading { get; set; }
+
+        private bool ShowDiagnostics { get; set; }
+
+        private void ToggleDiagnostics()
+        {
+            ShowDiagnostics = !ShowDiagnostics;
+            AreDiagnosticsShown = ShowDiagnostics;
+        }
 
         private string Version
         {

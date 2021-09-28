@@ -19,13 +19,23 @@
         <div id="user-code-editor-container">
             <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivate" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreate" />
             <CodeEditor @ref="@CodeEditorComponent" Code="@CodeEditorContent" CodeFileType="@CodeFileType" />
+            <ErrorList @bind-Show="@ShowDiagnostics" Diagnostics="@Diagnostics" />
         </div>
         <div id="user-page-window-container">
             <iframe id="user-page-window" src="/user-page"></iframe>
         </div>
     </div>
     <MudAppBar Bottom="true" Fixed="false" Elevation="0" Class="try-errorlist repl-navbar">
-        <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics" />
+        <div class="try-errorlist-button d-flex align-center" @onclick="@ToggleDiagnostics">
+            <MudIcon Icon="@Icons.Material.Outlined.ErrorOutline" />
+            <MudText>@ErrorsCount</MudText>
+            <MudIcon Icon="@Icons.Material.Outlined.WarningAmber" />
+            <MudText>@WarningsCount</MudText>
+            @if (ErrorsCount != 0 || WarningsCount != 0)
+            {
+                <MudIcon Icon="@(ShowDiagnostics? $"{Icons.Material.Outlined.ExpandMore}" : $"{Icons.Material.Outlined.ExpandLess}")" />
+            }
+        </div>
         <MudSpacer />
         <MudText Typo="Typo.body2" Class="ml-10">MudBlazor @Version</MudText>
     </MudAppBar>

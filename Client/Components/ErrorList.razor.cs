@@ -19,12 +19,6 @@
         [Parameter]
         public EventCallback<bool> ShowChanged { get; set; }
 
-        private int ErrorsCount => this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
-
-        private int WarningsCount => this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
-
-        private bool ShowIcon => this.Diagnostics.Any();
-
         private Task ToggleDiagnosticsAsync()
         {
             this.Show = !this.Show;
