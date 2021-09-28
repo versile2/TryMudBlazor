@@ -1,36 +1,36 @@
 ﻿
-    <MudCard id="save-snippet-popup" Class="try-save-snippet px-4 pt-pt4" Style="@DisplayStyle" Elevation="25">
+    <MudCard id="save-snippet-popup" Class="try-save-snippet" Style="@DisplayStyle" Elevation="8">
         <MudCardHeader>
             <CardHeaderContent>
                 <MudText Typo="Typo.h6">Save Public Snippet</MudText>
             </CardHeaderContent>
         </MudCardHeader>
-        <MudCardContent>
-            <ul class="snippet-save-warnings list-unstyled">
-                <li>Please <span class="font-weight-bold">do NOT include</span> any personal data</li>
-                <li>Please <span class="font-weight-bold">do NOT include</span> any copyrighted content</li>
+        <MudCardContent Class="py-0">
+            <ul>
+                <li>Please do <b>NOT</b> include any personal data.</li>
+                <li>Please do <b>NOT</b> include any copyrighted content.</li>
             </ul>
-
-
+            <div class="save-snippet-callout"></div>
+        </MudCardContent>
+        <MudCardActions Class="pb-2">
             @if (string.IsNullOrWhiteSpace(SnippetLink))
             {
                 <div>
-                    <MudButton Color="Color.Primary" disabled="@Loading" @onclick="SaveAsync">Confirm</MudButton>
+                    <MudButton Color="Color.Primary" Disabled="@Loading" @onclick="SaveAsync">Confirm</MudButton>
 
                     @if (Loading)
                     {
                         <div class="spinner-border save-snippet-loader" role="status">
                             <span class="sr-only"></span>
-                        </div>}
-                </div> }
+                        </div>
+                    }
+                </div>
+             }
             else
             {
-                <div class="snippet-link-wrapper">
-                    <input type="text" class="form-control" @bind="SnippetLink" readonly="readonly" />
+                <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Value="SnippetLink" ReadOnly="true"/>
+                <MudIconButton Icon="@Icons.Material.Filled.ContentCopy" OnClick="CopyLinkToClipboard" Class="pa-2" />
+            }
 
-                    <MudButton StartIcon="@Icons.Material.Filled.ContentCopy" @onclick="CopyLinkToClipboard"></MudButton>
-                </div>}
-
-            <div class="save-snippet-callout"></div>
-        </MudCardContent>
+        </MudCardActions>
     </MudCard>

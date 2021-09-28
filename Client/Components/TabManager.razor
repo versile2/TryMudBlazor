@@ -1,8 +1,8 @@
-﻿<div class="try-tabs">
+﻿<div class="try-tabs tabs-wrapper">
     <div class="try-tabs-toolbar">
         <div class="try-tabs-toolbar-inner">
             <div class="try-tabs-toolbar-content">
-                <div class="try-tabs-toolbar-wrapper tabs-wrapper">
+                <div class="try-tabs-toolbar-wrapper">
                     @if (Tabs != null)
                     {
                         @for (var i = 0; i < Tabs.Count; i++)
@@ -30,7 +30,7 @@
                                 placeholder=" .razor OR .cs" />
                         </form>
                     </div>
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" @onclick="@InitTabCreating" Class="rounded-0" Style="color:#fff; padding: 6px 12px;"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" @onclick="@InitTabCreating" Class="rounded-0 py-1 px-2"/>
                 </div>
             </div>
         </div>

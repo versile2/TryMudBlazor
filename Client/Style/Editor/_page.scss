@@ -1,7 +1,4 @@
-﻿body {
-    overflow: hidden;
-}
-
+﻿
 .try-layout{
     .try-editor{
         display: flex;
@@ -12,16 +9,48 @@
             border-top: none;
         }
     }
+    .try-drawer{
+        background-color: #594ae2;
+        color: #fff;
+
+        .mud-icon-button{
+            padding:16px;
+            border-radius: 0px;
+            &:hover{
+                color:#fff;
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+        .brand{
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.5rem;
+        }
+    }
+
     .try-save-snippet{
         position: absolute;
         top: 55px;
-        left: 125px;
+        left: 70px;
         z-index: 100;
+
+        .mud-input-control{
+            margin-left: 6px;
+            margin-right: 6px;
+            input {
+                padding: 6px 6px;
+                font-size: 0.9rem;
+            }
+        }
     }
     .try-errorlist{
-        height: 32px;
+        height: 24px;
         bottom: 0;
         position: absolute;
+        background-color: #2c2c2c !important;
+        color: #e0e0e0 !important;
     }
     .gutter.gutter-horizontal {
         cursor: ew-resize;
@@ -29,5 +58,14 @@
     }
     .minimap {
         display: none;
+    }
+    .decorationsOverviewRuler{
+        width: 8px !important;
+    }
+    .invisible.scrollbar.vertical.fade, .visible.scrollbar.vertical{
+        width: 8px !important;
+    }
+    .invisible.scrollbar.horizontal.fade, .visible.scrollbar.horizontal{
+        height: 8px !important;
     }
 }

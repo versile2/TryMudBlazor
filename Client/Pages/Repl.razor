@@ -3,13 +3,15 @@
 @layout MainLayout
 
 <div class="try-layout">
-    <MudAppBar Elevation="1" Dense="true" Color="Color.Primary" Fixed="false" Class="repl-navbar">
-        <MudLink Style="color:#fff !important;" Class="mr-5" Href="/">TryMudBlazor</MudLink>
-        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@CompileAsync" Disabled="@Loading" title="Run (Ctrl + S)" StartIcon="@Icons.Material.Filled.PlayCircleOutline">Run</MudButton>
-        <MudButton Color="Color.Inherit" Class="mr-3" Variant="Variant.Text" @onclick="@ShowSaveSnippetPopup" id="save-snippet-btn" title="Save public snippet" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
-        <MudText Typo="Typo.body2" Class="ml-10">MudBlazor @Version</MudText>
-    </MudAppBar>
     <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
+    <MudDrawer Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer">
+        <MudIconButton title="Run (Ctrl + S)" OnClick="@CompileAsync" Disabled="@Loading" Icon="@Icons.Material.Outlined.PlayCircleOutline" Color="Color.Inherit" />
+        <MudIconButton id="save-snippet-btn" OnClick="@ShowSaveSnippetPopup" Icon="@Icons.Material.Outlined.Save" Color="Color.Inherit" />
+        <MudSpacer />
+        <div class="d-flex justify-center">
+            <div class="brand">Try<span class="pt-4 pb-12">MudBlazor</span></div>
+        </div>
+    </MudDrawer>
     <div class="try-editor">
         <MudOverlay Visible="Loading" Absolute="true" DarkBackground="true">
             <MudText Typo="Typo.h4" Class="white-text"> @LoaderText</MudText>
@@ -22,9 +24,10 @@
             <iframe id="user-page-window" src="/user-page"></iframe>
         </div>
     </div>
-    <MudAppBar Bottom="true" Fixed="false" Color="Color.Info" Elevation="0" Class="try-errorlist">
+    <MudAppBar Bottom="true" Fixed="false" Elevation="0" Class="try-errorlist repl-navbar">
         <ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics" />
+        <MudSpacer />
+        <MudText Typo="Typo.body2" Class="ml-10">MudBlazor @Version</MudText>
     </MudAppBar>
 </div>
-
 

@@ -127,6 +127,8 @@ window.App.Repl = window.App.Repl || (function () {
                 height -= document.getElementsByClassName('tabs-wrapper')[0].offsetHeight;
             }
 
+            document.getElementsByTagName("body")[0].style.overflow = "hidden";
+
             const heightString = `${height}px`;
             element.style.height = heightString;
 
@@ -148,7 +150,7 @@ window.App.Repl = window.App.Repl || (function () {
                     'width': `calc(${size}% - ${gutterSize + 1}px)`,
                 }),
                 gutterStyle: (_, gutterSize) => ({
-                    'width': `${gutterSize}px`,
+                    'width': `${gutterSize - 6}px`,
                 }),
                 onDrag: () => throttle(window.App.CodeEditor.resize, 30, 'resetEditor'),
                 onDragEnd: window.App.CodeEditor.resize
@@ -157,7 +159,7 @@ window.App.Repl = window.App.Repl || (function () {
     }
 
     function onWindowResize() {
-        setElementHeight(_resultContainerId);
+        setElementHeight(_resultContainerId, true);
         setElementHeight(_editorContainerId, true);
         window.App.CodeEditor.resize();
     }
