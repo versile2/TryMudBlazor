@@ -1,0 +1,19 @@
+name: on-release
+
+on:
+  repository_dispatch:
+    types: [mudblazor-release]
+    
+
+jobs:
+  pipeline:
+    name: Pipeline
+    uses: MudBlazor/TryMudBlazor/.github/workflows/template-pipeline.yml@master
+    with:
+      dotnet-version: 5.0.x
+      deploy-web-app: true
+      deploy-condition: 'refs/heads/main'
+      deploy-web-app-name: trymudblazor
+      deploy-web-app-slot-name: staging
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_TRY_MUDBLAZOR }}
