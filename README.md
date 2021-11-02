@@ -4,7 +4,8 @@
 [![Discord](https://img.shields.io/discord/786656789310865418?color=%237289da&label=Discord&logo=discord&logoColor=%237289da&style=flat-square)](https://discord.gg/mudblazor)
 [![Twitter](https://img.shields.io/twitter/follow/MudBlazor?color=1DA1F2&label=Twitter&logo=Twitter&style=flat-square)](https://twitter.com/MudBlazor)
 
-TryMudBlazor is a playground for trying out [MudBlazor](https://mudblazor.com) components entirely in the browser. It is based on [Blazor REPL](https://blazorrepl.com) which is running entirely on top of Blazor WASM - the [WebAssembly](https://webassembly.org) hosting model of [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor).
+TryMudBlazor is a playground for trying out [MudBlazor](https://mudblazor.com) components entirely in the browser. <br>
+It is based on Blazor WASM - the [WebAssembly](https://webassembly.org) hosting model of [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor).
 
 ## License
 GPL 2
