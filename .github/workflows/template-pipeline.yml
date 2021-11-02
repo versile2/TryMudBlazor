@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./TryMudBlazor.Server
+        working-directory: ./src/TryMudBlazor.Server
     
     steps:
       - name: Checkout repository
