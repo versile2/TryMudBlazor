@@ -11,13 +11,13 @@ It is based on Blazor WASM - the [WebAssembly](https://webassembly.org) hosting 
 GPL 2
 
 ## Authors and Contributors
-Huge thanks to the Authors of Blazor REPL:
-- [Kristian Mariyanov](https://github.com/kristianmariyanov)
-- [Vladislav Karamfilov](https://github.com/vladislav-karamfilov)
-
 Adaptation for MudBlazor and general web interface overhaul:
 - [Meinrad Recheis](https://github.com/henon)
 - [Jonny Larsson](https://github.com/Garderoben)
 
 Making a custom backend for MudBlazor snippets:
 - [Mike Surcouf](https://github.com/mikes-gh)
+
+Huge thanks to the orginal authors of Blazor REPL:
+- [Kristian Mariyanov](https://github.com/kristianmariyanov)
+- [Vladislav Karamfilov](https://github.com/vladislav-karamfilov)
