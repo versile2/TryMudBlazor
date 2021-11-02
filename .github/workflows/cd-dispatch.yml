@@ -1,4 +1,4 @@
-name: on-release
+name: cd-dispatch
 
 on:
   repository_dispatch:
