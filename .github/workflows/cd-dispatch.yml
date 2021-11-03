@@ -26,10 +26,23 @@ jobs:
       run: |
           dotnet add ./Try.Core/Try.Core.csproj package MudBlazor --version ${{ github.event.client_payload.mud-version }}
           dotnet add ./TryMudBlazor.Client/TryMudBlazor.Client.csproj package MudBlazor --version ${{ github.event.client_payload.mud-version }}
+    
+    - name: Commit Message
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git commit -m "Updated MudBlazor to ${{ github.event.client_payload.mud-version }}" -a
+    
+    - name: Commit & Push
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
         
   pipeline:
     name: Pipeline
-    uses: MudBlazor/TryMudBlazor/.github/workflows/template-pipeline.yml@master
+    needs: update-package
+    uses: MudBlazor/TryMudBlazor/.github/workflows/template-pipeline.yml@main
     with:
       dotnet-version: ${{ github.event.client_payload.dotnet-version }}
       deploy-web-app: true

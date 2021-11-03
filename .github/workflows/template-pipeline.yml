@@ -66,7 +66,7 @@ jobs:
   cd:
     name: Deploy
     needs: ci
-    if: ${{ inputs.deploy-web-app == true && github.event_name == 'push' && github.repository_owner == 'MudBlazor' && github.ref == inputs.deploy-condition }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' && inputs.deploy-web-app == true && github.repository_owner == 'MudBlazor' && github.ref == inputs.deploy-condition }}
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifact
