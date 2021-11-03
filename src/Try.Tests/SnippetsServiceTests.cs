@@ -22,7 +22,7 @@ namespace Tests
     public class Tests
     {
         private readonly List<CodeFile> codeFiles = new List<CodeFile>();
-        IOptions<SnippetsOptions> snippetsOptions;
+        private IOptions<SnippetsOptions> snippetsOptions;
 
         [SetUp]
         public void Setup()
