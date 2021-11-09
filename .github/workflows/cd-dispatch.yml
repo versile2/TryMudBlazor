@@ -3,7 +3,7 @@ name: cd-dispatch
 on:
   repository_dispatch:
     types: [mudblazor-release]
-    
+  workflow_dispatch:
 
 jobs:
   update-package:
