@@ -14,8 +14,6 @@ jobs:
       working-directory: ./src
 
    steps:
-    - name: Sleeper
-      run: sleep 5m
    
     - name: Checkout repository
       uses: actions/checkout@v2
