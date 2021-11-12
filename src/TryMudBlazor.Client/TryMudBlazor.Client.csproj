@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Try.Core\Try.Core.csproj" />
+    <ProjectReference Include="..\UserComponents\Try.UserComponents.csproj" />
   </ItemGroup>
 
 </Project>

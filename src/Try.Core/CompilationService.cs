@@ -20,7 +20,7 @@
 
     public class CompilationService
     {
-        public const string DefaultRootNamespace = "BlazorRepl.UserComponents";
+        public const string DefaultRootNamespace = nameof(Try.UserComponents);
 
         private const string WorkingDirectory = "/BlazorRepl/";
         private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
@@ -88,7 +88,7 @@
                 .ToList();
 
             baseCompilation = CSharpCompilation.Create(
-                "BlazorRepl.UserComponents",
+                DefaultRootNamespace,
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
                 new CSharpCompilationOptions(
