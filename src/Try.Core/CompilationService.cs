@@ -17,12 +17,13 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Razor;
     using Microsoft.JSInterop;
+    using Try;
 
     public class CompilationService
     {
-        public const string DefaultRootNamespace = nameof(Try.UserComponents);
+        public const string DefaultRootNamespace = $"{nameof(Try)}.{nameof(UserComponents)}";
 
-        private const string WorkingDirectory = "/BlazorRepl/";
+        private const string WorkingDirectory = "/TryMudBlazor/";
         private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
 @using System.Linq
 @using System.Net.Http
