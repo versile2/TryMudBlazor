@@ -179,7 +179,7 @@
                 if (this.CodeFiles.TryGetValue(CoreConstants.MainComponentFilePath, out mainComponent))
                 {
                     originalMainComponentContent = mainComponent.Content;
-                    mainComponent.Content = MainComponentCodePrefix + originalMainComponentContent;
+                    mainComponent.Content = MainComponentCodePrefix + originalMainComponentContent.Replace(MainComponentCodePrefix, "");
                 }
 
                 compilationResult = await this.CompilationService.CompileToAssemblyAsync(
