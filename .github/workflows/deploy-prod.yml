@@ -26,7 +26,7 @@ jobs:
     secrets:
       publish-profile: ${{ secrets.PUBLISH_TRY_MUDBLAZOR }}
       
-  azure-slot-swap:
+  azure-app:
     uses: MudBlazor/Workflows/.github/workflows/azure-app-service.yml@main
     if: ${{ github.event.inputs.deploy-task == 'slot-swap' }}
     with:
