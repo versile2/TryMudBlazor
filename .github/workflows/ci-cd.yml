@@ -13,5 +13,6 @@ jobs:
       deploy-web-app: true
       deploy-condition: 'refs/heads/dev'
       deploy-web-app-name: trymudblazor-dev
+      working-directory: ./src/TryMudBlazor.Server
     secrets:
       publish-profile: ${{ secrets.PUBLISH_TRY_MUDBLAZOR_DEV }}
