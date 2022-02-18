@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
         deploy-task:
-          description: 'Define if you want to publish to staging or swap slots'
+          description: 'Publish new package to staging or swap slots'
           required: true
           default: 'publish' 
           type: choice
