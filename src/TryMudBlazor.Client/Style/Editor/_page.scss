@@ -10,11 +10,23 @@
         #user-code-editor-container{
             position: relative;
         }
+        
+        .decorationsOverviewRuler{
+            display: none !important;
+        }
     }
     .try-drawer{
         background-color: var(--try-drawer);
         color: var(--try-drawer-text);
-
+        
+        & + .mud-icon-button{
+            padding:12px;
+            font-size: 2rem;
+            .mud-icon-size-medium{
+                font-size: 2rem;
+            }
+        }
+        
         .mud-icon-button{
             padding:16px;
             border-radius: 0px;
@@ -51,9 +63,12 @@
         position: absolute;
         width: calc(100% - 10px);
         bottom: -32px;
-        background-color: #fff;
         border-top: 1px solid var(--mud-palette-table-lines);
-
+        
+        .mud-table{
+            background-color: var(--try-table);
+        }
+        
         table {
             width: 100%;
         }

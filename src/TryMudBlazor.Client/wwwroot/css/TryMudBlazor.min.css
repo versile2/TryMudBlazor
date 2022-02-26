@@ -1,7 +1,7 @@
 .try-mudblazor-index .mud-appbar .brand {
   font-size: 1.7rem;
   font-weight: 300;
-  color: #424242;
+  color: var(--mud-palette-text-primary);
   letter-spacing: 0.1rem;
   line-height: 1.5;
   margin-left: auto;
@@ -23,7 +23,7 @@
   font-weight: 500;
 }
 .try-mudblazor-index .try-mudblazor-codecard {
-  background: linear-gradient(180deg, #f9fafb 0%, var(--mud-palette-background-grey) 100%);
+  background-color: var(--mud-palette-background-grey);
 }
 .try-mudblazor-index .try-index-landing-icons {
   stroke-width: 0.6;
@@ -89,7 +89,7 @@
 
 .mud-codeblock pre {
   height: 100%;
-  color: #424242;
+  color: var(--mud-palette-text-primary);
   padding: 0px;
   font-size: 1em;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
@@ -106,19 +106,19 @@
 }
 
 .mud-codeblock .html .htmlElementName {
-  color: #594ae2;
+  color: var(--mud-palette-primary);
 }
 
 .mud-codeblock .html .htmlAttributeName {
-  color: #594ae2;
+  color: var(--mud-palette-primary);
 }
 
 .mud-codeblock .html .htmlOperator, .mud-codeblock .html .quot {
-  color: #594ae2;
+  color: var(--mud-palette-primary);
 }
 
 .mud-codeblock .html .htmlAttributeValue {
-  color: #424242;
+  color: var(--mud-palette-text-primary);
 }
 
 .mud-codeblock .html .htmlLink {
@@ -131,7 +131,7 @@
 }
 
 .mud-codeblock .html .enumValue, .mud-codeblock .html .sharpVariable {
-  color: #424242;
+  color: var(--mud-palette-grey);
 }
 
 .mud-codeblock .html .keyword {
@@ -200,9 +200,19 @@
 .try-layout .try-editor #user-code-editor-container {
   position: relative;
 }
+.try-layout .try-editor .decorationsOverviewRuler {
+  display: none !important;
+}
 .try-layout .try-drawer {
   background-color: var(--try-drawer);
   color: var(--try-drawer-text);
+}
+.try-layout .try-drawer + .mud-icon-button {
+  padding: 12px;
+  font-size: 2rem;
+}
+.try-layout .try-drawer + .mud-icon-button .mud-icon-size-medium {
+  font-size: 2rem;
 }
 .try-layout .try-drawer .mud-icon-button {
   padding: 16px;
@@ -236,8 +246,10 @@
   position: absolute;
   width: calc(100% - 10px);
   bottom: -32px;
-  background-color: #fff;
   border-top: 1px solid var(--mud-palette-table-lines);
+}
+.try-layout .try-diagnostics .mud-table {
+  background-color: var(--try-table);
 }
 .try-layout .try-diagnostics table {
   width: 100%;
@@ -374,6 +386,8 @@
   border: none !important;
   border-radius: 0px !important;
   outline: none !important;
+  color: var(--try-tabs-tab-input-text) !important;
+  background-color: var(--try-tabs-tab-input) !important;
 }
 .try-tabs .try-tab-input:focus {
   border: none !important;
@@ -430,6 +444,14 @@
   color: var(--try-code-mtk-5) !important;
 }
 
+.mtk6 {
+  color: var(--try-code-mtk-6) !important;
+}
+
+.mtk7 {
+  color: var(--try-code-mtk-7) !important;
+}
+
 .mtk10 {
   color: var(--try-code-mtk-10) !important;
 }
@@ -440,6 +462,14 @@
 
 .mtk15 {
   color: var(--try-code-mtk-15) !important;
+}
+
+.mtk20 {
+  color: var(--try-code-mtk-20) !important;
+}
+
+.monaco-editor .cursor {
+  background-color: var(--try-editor-cursor) !important;
 }
 
 /*# sourceMappingURL=TryMudBlazor.min.css.map */

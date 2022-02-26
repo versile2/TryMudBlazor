@@ -35,6 +35,12 @@
 .mtk5 {
   color: var(--try-code-mtk-5) !important;
 }
+.mtk6 {
+  color: var(--try-code-mtk-6) !important;
+}
+.mtk7 {
+  color: var(--try-code-mtk-7) !important;
+}
 .mtk10 {
   color: var(--try-code-mtk-10) !important;
 }
@@ -43,4 +49,11 @@
 }
 .mtk15 {
   color: var(--try-code-mtk-15) !important;
+}
+.mtk20 {
+  color: var(--try-code-mtk-20) !important;
+}
+
+.monaco-editor .cursor {
+  background-color: var(--try-editor-cursor) !important;
 }

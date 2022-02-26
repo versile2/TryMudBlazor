@@ -3,7 +3,7 @@
         .brand {
             font-size: 1.7rem;
             font-weight: 300;
-            color: #424242;
+            color: var(--mud-palette-text-primary);
             letter-spacing: .1rem;
             line-height: 1.5;
             margin-left: auto;
@@ -32,7 +32,7 @@
     }
 
     .try-mudblazor-codecard {
-        background: linear-gradient( 180deg,#f9fafb 0%,var(--mud-palette-background-grey) 100%);
+        background-color: var(--mud-palette-background-grey);
     }
 
     .try-index-landing-icons {

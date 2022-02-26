@@ -65,6 +65,8 @@
         border: none !important;
         border-radius: 0px !important;
         outline: none !important;
+        color: var(--try-tabs-tab-input-text) !important;
+        background-color: var(--try-tabs-tab-input) !important;
 
         &:focus {
             border: none !important;

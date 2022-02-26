@@ -5,8 +5,8 @@
         public const string MainComponentFilePath = "__Main.razor";
         public const string MainComponentDefaultFileContent = @"<MudText Typo=""Typo.h6"">MudBlazor is @Text</MudText>
 <MudButton Variant = ""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
-@code
-    {
+
+@code {
     public string Text { get; set; } = ""????"";
     public string ButtonText { get; set; } = ""Click Me"";
     public int ButtonClicked { get; set; }
