@@ -11,4 +11,16 @@
 
 @code{
     [Inject] private LayoutService LayoutService { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await LayoutService.ApplyUserPreferences(false);
+            StateHasChanged();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
 }
