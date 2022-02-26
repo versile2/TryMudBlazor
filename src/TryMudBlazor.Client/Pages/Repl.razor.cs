@@ -15,8 +15,8 @@
 
     public partial class Repl : IDisposable
     {
-        private bool _isDarkMode;
-        private MudThemeProvider _mudThemeProvider;
+        [Inject] private LayoutService LayoutService { get; set; }
+        
         private const string MainComponentCodePrefix = "@page \"/__main\"\n";
         private const string MainUserPagePath = "/__main";
 
@@ -118,15 +118,6 @@
             }
 
             base.OnAfterRender(firstRender);
-        }
-        
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-                StateHasChanged();
-            }
         }
 
         protected override async Task OnInitializedAsync()
@@ -296,11 +287,6 @@
             this.StateHasChanged();
 
             return Task.Delay(10); // Ensure rendering has time to be called
-        }
-
-        private void ToggleDarkMode()
-        {
-            _isDarkMode = !_isDarkMode;
         }
     }
 }

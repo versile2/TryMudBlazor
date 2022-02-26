@@ -1,18 +1,13 @@
 ﻿@page "/snippet/{snippetId?}"
 @layout MainLayout
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode"/>
-<TryThemeProvider IsDarkMode="@_isDarkMode"/>
-<MudDialogProvider />
-<MudSnackbarProvider />
-
 <div class="try-layout">
     <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent"></SaveSnippetPopup>
     <MudDrawer Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer">
         <MudIconButton title="Run (Ctrl + S)" OnClick="@CompileAsync" Disabled="@Loading" Icon="@Icons.Material.Outlined.PlayCircleOutline" Color="Color.Inherit" />
         <MudIconButton id="save-snippet-btn" OnClick="@ShowSaveSnippetPopup" Icon="@Icons.Material.Outlined.Save" Color="Color.Inherit" />
-        <MudTooltip Duration="1000" Text="@(_isDarkMode ? "Switch to Light Theme" : "Switch to Dark Theme")">
-            <MudIconButton Icon="@(_isDarkMode ? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="ToggleDarkMode"/>
+        <MudTooltip Duration="1000" Text="@(LayoutService.IsDarkMode ? "Switch to Light Theme" : "Switch to Dark Theme")">
+            <MudIconButton Icon="@(LayoutService.IsDarkMode ? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@LayoutService.ToggleDarkMode"/>
         </MudTooltip>
         <MudSpacer />
         <div class="d-flex justify-center">

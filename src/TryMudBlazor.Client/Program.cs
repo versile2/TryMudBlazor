@@ -3,6 +3,7 @@ namespace TryMudBlazor.Client
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Blazored.LocalStorage;
     using TryMudBlazor.Client.Models;
     using TryMudBlazor.Client.Services;
     using Try.Core;
@@ -12,6 +13,7 @@ namespace TryMudBlazor.Client
     using Microsoft.Extensions.Logging;
     using Microsoft.JSInterop;
     using MudBlazor.Services;
+    using Services.UserPreferences;
 
     public class Program
     {
@@ -32,6 +34,9 @@ namespace TryMudBlazor.Client
 
             builder.Logging.Services.AddSingleton<ILoggerProvider, HandleCriticalUserComponentExceptionsLoggerProvider>();
             builder.Services.AddMudServices();
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddScoped<IUserPreferencesService, UserPreferencesService>();
+            builder.Services.AddScoped<LayoutService>();
 
             await builder.Build().RunAsync();
         }
