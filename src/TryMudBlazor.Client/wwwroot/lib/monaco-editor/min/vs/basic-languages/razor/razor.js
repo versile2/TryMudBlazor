@@ -375,7 +375,7 @@ var moduleExports = (() => {
       ],
       razorInSimpleState: [
         [/@\*/, "comment.cs", "@razorBlockCommentTopLevel"],
-        [/@[{(]/, "metatag.cs", "@razorRootTopLevel"],
+        [/@(code\s*)?[{(]/, "metatag.cs", "@razorRootTopLevel"],
         [/(@)(\s*[\w]+)/, ["metatag.cs", { token: "identifier.cs", switchTo: "@$S2.$S3" }]],
         [/[})]/, { token: "metatag.cs", switchTo: "@$S2.$S3" }],
         [/\*@/, { token: "comment.cs", switchTo: "@$S2.$S3" }]

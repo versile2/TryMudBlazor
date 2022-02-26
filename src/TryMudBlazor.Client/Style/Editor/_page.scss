@@ -14,19 +14,20 @@
     .try-drawer{
         background-color: var(--try-drawer);
         color: var(--try-drawer-text);
-
+        
+        & + .mud-icon-button{
+            padding:12px;
+            font-size: 2rem;
+            .mud-icon-size-medium{
+                font-size: 2rem;
+            }
+        }
+        
         .mud-icon-button{
             padding:16px;
             border-radius: 0px;
             &:hover{
                 background-color: rgba(255, 255, 255, 0.05);
-            }
-            &:first-child{
-                padding:12px;
-                font-size: 2rem;
-                .mud-icon-size-medium{
-                    font-size: 2rem;
-                }
             }
         }
         .brand{
