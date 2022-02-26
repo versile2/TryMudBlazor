@@ -1,26 +1,21 @@
 ﻿@using TryMudBlazor.Client.Services
 @inherits LayoutComponentBase
 
-<MudThemeProvider IsDarkMode="@LayoutService.IsDarkMode"/>
+<MudThemeProvider IsDarkMode="@LayoutService.IsDarkMode" />
 
 <div class="main">
-    <div class="content px-4">
-        @Body
-    </div>
+	<div class="content px-4">
+		@Body
+	</div>
 </div>
 
-@code{
-    [Inject] private LayoutService LayoutService { get; set; }
+@code {
+	[Inject] private LayoutService LayoutService { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(firstRender)
-        {
-            await LayoutService.ApplyUserPreferences(false);
-            StateHasChanged();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await LayoutService.ApplyUserPreferences(false);
+		await base.OnInitializedAsync();
+	}
 
 }
