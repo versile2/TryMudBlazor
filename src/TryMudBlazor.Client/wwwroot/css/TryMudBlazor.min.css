@@ -236,8 +236,10 @@
   position: absolute;
   width: calc(100% - 10px);
   bottom: -32px;
-  background-color: #fff;
   border-top: 1px solid var(--mud-palette-table-lines);
+}
+.try-layout .try-diagnostics .mud-table {
+  background-color: var(--try-table);
 }
 .try-layout .try-diagnostics table {
   width: 100%;

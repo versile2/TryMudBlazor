@@ -51,9 +51,12 @@
         position: absolute;
         width: calc(100% - 10px);
         bottom: -32px;
-        background-color: #fff;
         border-top: 1px solid var(--mud-palette-table-lines);
-
+        
+        .mud-table{
+            background-color: var(--try-table);
+        }
+        
         table {
             width: 100%;
         }
