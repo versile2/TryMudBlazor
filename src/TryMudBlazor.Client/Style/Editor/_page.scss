@@ -10,6 +10,10 @@
         #user-code-editor-container{
             position: relative;
         }
+        
+        .decorationsOverviewRuler{
+            display: none !important;
+        }
     }
     .try-drawer{
         background-color: var(--try-drawer);

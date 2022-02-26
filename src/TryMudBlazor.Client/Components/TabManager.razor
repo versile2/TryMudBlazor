@@ -20,13 +20,13 @@
                             </div>
                         }
                     }
-                    <div class="try-tab pa-0 px-1" style="@TabCreatingDisplayStyle">
+                    <div class="try-tab pa-0" style="@TabCreatingDisplayStyle">
                         <form @onsubmit="@CreateTabAsync" autocomplete="off" class="try-tab-form-input">
                             <input class="try-tab-input"
                                 @ref="newTabInput"
                                 @bind="@newTab"
                                 @onblur="@CreateTabAsync"
-                                placeholder=" .razor OR .cs" />
+                                placeholder=".razor OR .cs" />
                         </form>
                     </div>
                     <MudIconButton Icon="@Icons.Material.Filled.Add" @onclick="@InitTabCreating" Class="rounded-0 py-1 px-2"/>

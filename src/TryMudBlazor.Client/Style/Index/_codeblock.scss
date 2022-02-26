@@ -6,7 +6,7 @@
 
     .mud-codeblock pre {
         height: 100%;
-        color: #424242;
+        color: var(--mud-palette-text-primary);
         padding: 0px;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
@@ -23,19 +23,19 @@
     }
 
     .mud-codeblock .html .htmlElementName {
-        color: #594ae2;
+        color: var(--mud-palette-primary);
     }
 
     .mud-codeblock .html .htmlAttributeName {
-        color: #594ae2;
+        color: var(--mud-palette-primary);
     }
 
     .mud-codeblock .html .htmlOperator, .mud-codeblock .html .quot {
-        color: #594ae2;
+        color: var(--mud-palette-primary);
     }
 
     .mud-codeblock .html .htmlAttributeValue {
-        color: #424242;
+        color: var(--mud-palette-text-primary);
     }
 
     .mud-codeblock .html .htmlLink {
@@ -48,7 +48,7 @@
     }
 
     .mud-codeblock .html .enumValue, .mud-codeblock .html .sharpVariable {
-        color: #424242;
+        color: var(--mud-palette-grey);
     }
 
     .mud-codeblock .html .keyword {
