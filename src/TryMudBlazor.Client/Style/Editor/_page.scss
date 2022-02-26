@@ -5,22 +5,20 @@
         position: relative;
         .code-editor {
             height: 100%;
-            border: 1px solid #ccc;
-            border-top: none;
+            border: none;
         }
         #user-code-editor-container{
             position: relative;
         }
     }
     .try-drawer{
-        background-color: #594ae2;
-        color: #fff;
+        background-color: var(--try-drawer);
+        color: var(--try-drawer-text);
 
         .mud-icon-button{
             padding:16px;
             border-radius: 0px;
             &:hover{
-                color:#fff;
                 background-color: rgba(255, 255, 255, 0.05);
             }
         }

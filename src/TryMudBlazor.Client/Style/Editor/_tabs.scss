@@ -5,7 +5,7 @@
 
     .try-tabs-toolbar{
         position: relative;
-        background-color: #f3f3f3;
+        background-color: var(--try-tabs);
 
         .try-tabs-toolbar-inner{
             display: flex;
@@ -28,7 +28,7 @@
     }
 
     .try-tab{
-        color: #444;
+        color: var(--try-tabs-tab-text);
         width: auto;
         min-width: auto !important;
         letter-spacing: normal;
@@ -53,12 +53,13 @@
             background-color: rgba(66,66,66,0.05);
         }
     }
+    
 
     .try-tab-form-input{
         line-height: 2;
         height: 32px;
     }
-
+    
     .try-tab-input {
         padding: 5px 10px;
         border: none !important;
@@ -73,12 +74,12 @@
     }
 
     .try-tab-active {
-        color: #000;
-        background-color: #fff;
-
+        color: var(--try-tabs-tab-active-text);
+        background-color: var(--try-tabs-tab-active);
+        
         &:hover {
             cursor: pointer;
-            color: #594ae2;
+            background-color: var(--try-tabs-tab-active);
         }
     }
 }
