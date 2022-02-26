@@ -21,6 +21,13 @@
             &:hover{
                 background-color: rgba(255, 255, 255, 0.05);
             }
+            &:first-child{
+                padding:12px;
+                font-size: 2rem;
+                .mud-icon-size-medium{
+                    font-size: 2rem;
+                }
+            }
         }
         .brand{
             writing-mode: vertical-rl;
