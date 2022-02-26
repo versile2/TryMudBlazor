@@ -36,7 +36,6 @@
 ";
 
         private const string MudBlazorServices = @"
-<MudThemeProvider/>
 <MudDialogProvider FullWidth=""true"" MaxWidth=""MaxWidth.ExtraSmall"" />
 <MudSnackbarProvider/>
 
