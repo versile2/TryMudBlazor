@@ -5,6 +5,7 @@
     using Try.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
+    using System.Text.RegularExpressions;
 
     public partial class CodeEditor : IDisposable
     {
@@ -39,6 +40,9 @@
 
         protected override void OnAfterRender(bool firstRender)
         {
+            var newCode = this.Code;
+            this.Code = Regex.Replace(newCode, @"@code\s*\r?\n\s*{", "@code {");
+
             if (firstRender)
             {
                 this.JsRuntime.InvokeVoid(
