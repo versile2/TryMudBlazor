@@ -41,7 +41,10 @@
         protected override void OnAfterRender(bool firstRender)
         {
             var newCode = this.Code;
-            this.Code = Regex.Replace(newCode, @"@code\s*\r?\n\s*{", "@code {");
+            if (newCode != null)
+            {
+                this.Code = Regex.Replace(newCode, @"@code\s*\r?\n\s*{", "@code {");
+            }
 
             if (firstRender)
             {
