@@ -12,6 +12,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components.Routing;
+    using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
     using Microsoft.AspNetCore.Razor.Language;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -66,6 +67,7 @@
                 typeof(IJSRuntime).Assembly, // Microsoft.JSInterop
                 typeof(RequiredAttribute).Assembly, // System.ComponentModel.Annotations
                 typeof(MudBlazor.MudButton).Assembly, // MudBlazor
+                typeof(WebAssemblyHostBuilder).Assembly, // Microsoft.AspNetCore.Components.WebAssembly
                 typeof(FluentValidation.AbstractValidator<>).Assembly,
             };
 
