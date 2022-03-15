@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using TryMudBlazor.Client.Services;
+    using Services;
     using Microsoft.AspNetCore.Components;
     using MudBlazor;
 
@@ -10,11 +10,11 @@
     {
         private const int DefaultActiveIndex = 0;
 
-        private bool tabCreating;
-        private bool shouldFocusNewTabInput;
-        private string newTab;
-        private ElementReference newTabInput;
-        private string previousInvalidTab;
+        private bool _tabCreating;
+        private bool _shouldFocusNewTabInput;
+        private string _newTab;
+        private ElementReference _newTabInput;
+        private string _previousInvalidTab;
 
         [Parameter]
         public IList<string> Tabs { get; set; }
@@ -33,15 +33,15 @@
 
         private int ActiveIndex { get; set; } = DefaultActiveIndex;
 
-        private string TabCreatingDisplayStyle => this.tabCreating ? string.Empty : "display: none;";
+        private string TabCreatingDisplayStyle => _tabCreating ? string.Empty : "display: none;";
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (this.shouldFocusNewTabInput)
+            if (_shouldFocusNewTabInput)
             {
-                this.shouldFocusNewTabInput = false;
+                _shouldFocusNewTabInput = false;
 
-                await this.newTabInput.FocusAsync();
+                await _newTabInput.FocusAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -49,19 +49,19 @@
 
         private Task ActivateTabAsync(int activeIndex)
         {
-            if (activeIndex < 0 || activeIndex >= this.Tabs.Count)
+            if (activeIndex < 0 || activeIndex >= Tabs.Count)
             {
                 return Task.CompletedTask;
             }
 
-            this.ActiveIndex = activeIndex;
+            ActiveIndex = activeIndex;
 
-            return this.OnTabActivate.InvokeAsync(this.Tabs[activeIndex]);
+            return OnTabActivate.InvokeAsync(Tabs[activeIndex]);
         }
 
         private async Task CloseTabAsync(int index)
         {
-            if (index < 0 || index >= this.Tabs.Count)
+            if (index < 0 || index >= Tabs.Count)
             {
                 return;
             }
@@ -71,60 +71,67 @@
                 return;
             }
 
-            var tab = this.Tabs[index];
-            this.Tabs.RemoveAt(index);
+            var tab = Tabs[index];
+            Tabs.RemoveAt(index);
 
-            await this.OnTabClose.InvokeAsync(tab);
+            await OnTabClose.InvokeAsync(tab);
 
-            if (index == this.ActiveIndex)
+            if (index == ActiveIndex)
             {
-                await this.ActivateTabAsync(DefaultActiveIndex);
+                await ActivateTabAsync(DefaultActiveIndex);
             }
         }
 
         private void InitTabCreating()
         {
-            this.tabCreating = true;
-            this.shouldFocusNewTabInput = true;
+            _tabCreating = true;
+            _shouldFocusNewTabInput = true;
         }
 
         private void TerminateTabCreating()
         {
-            this.tabCreating = false;
-            this.newTab = null;
+            _tabCreating = false;
+            _newTab = null;
         }
 
         private async Task CreateTabAsync()
         {
-            if (string.IsNullOrWhiteSpace(this.newTab))
+            if (string.IsNullOrWhiteSpace(_newTab))
             {
-                this.TerminateTabCreating();
+                TerminateTabCreating();
                 return;
             }
 
-            var normalizedTab = CodeFilesHelper.NormalizeCodeFilePath(this.newTab, out var error);
-            if (!string.IsNullOrWhiteSpace(error) || this.Tabs.Contains(normalizedTab))
+            var normalizedTab = CodeFilesHelper.NormalizeCodeFilePath(_newTab, out var error);
+            if (Tabs.Contains(normalizedTab))
             {
-                if (this.previousInvalidTab != this.newTab)
+                Snackbar.Add("This file already exists!", Severity.Warning);
+                await _newTabInput.FocusAsync();
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                if (_previousInvalidTab != _newTab)
                 {
-                    Snackbar.Add("File already exists.", Severity.Warning);
-                    this.previousInvalidTab = this.newTab;
+                    Snackbar.Add(error, Severity.Warning);
+                    _previousInvalidTab = _newTab;
                 }
 
-                await this.newTabInput.FocusAsync();
+                await _newTabInput.FocusAsync();
                 return;
             }
 
-            this.previousInvalidTab = null;
+            _previousInvalidTab = null;
 
-            this.Tabs.Add(normalizedTab);
+            Tabs.Add(normalizedTab);
 
-            this.TerminateTabCreating();
-            var newTabIndex = this.Tabs.Count - 1;
+            TerminateTabCreating();
+            var newTabIndex = Tabs.Count - 1;
 
-            await this.OnTabCreate.InvokeAsync(normalizedTab);
+            await OnTabCreate.InvokeAsync(normalizedTab);
 
-            await this.ActivateTabAsync(newTabIndex);
+            await ActivateTabAsync(newTabIndex);
         }
     }
 }

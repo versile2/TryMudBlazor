@@ -23,8 +23,8 @@
                     <div class="try-tab pa-0" style="@TabCreatingDisplayStyle">
                         <form @onsubmit="@CreateTabAsync" autocomplete="off" class="try-tab-form-input">
                             <input class="try-tab-input"
-                                @ref="newTabInput"
-                                @bind="@newTab"
+                                @ref="_newTabInput"
+                                @bind="@_newTab"
                                 @onblur="@CreateTabAsync"
                                 placeholder=".razor OR .cs" />
                         </form>
