@@ -41,7 +41,15 @@
             }
         </div>
         <MudSpacer />
-        <MudText Typo="Typo.body2" Class="ml-10 try-mudblazor-version">MudBlazor @Version</MudText>
+        <MudTooltip>
+            <TooltipContent>
+                <MudText Typo="Typo.body2">MudBlazor @Version</MudText>
+                <MudText Typo="Typo.body2">MudExtensions @MudExtensionsVersion</MudText>
+            </TooltipContent>
+            <ChildContent>
+                <MudText Typo="Typo.body2" Class="ml-10 try-mudblazor-version">MudBlazor @Version</MudText>
+            </ChildContent>
+        </MudTooltip>
     </MudAppBar>
 </div>
 @code{
