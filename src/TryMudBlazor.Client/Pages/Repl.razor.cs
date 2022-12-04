@@ -12,7 +12,6 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.JSInterop;
     using MudBlazor;
-    using MudExtensions;
 
     public partial class Repl : IDisposable
     {
@@ -80,15 +79,6 @@
             get
             {
                 var v = typeof(MudText).Assembly.GetName().Version;
-                return $"v{v.Major}.{v.Minor}.{v.Build}";
-            }
-        }
-
-        private string MudExtensionsVersion
-        {
-            get
-            {
-                var v = typeof(MudLoadingButton).Assembly.GetName().Version;
                 return $"v{v.Major}.{v.Minor}.{v.Build}";
             }
         }
