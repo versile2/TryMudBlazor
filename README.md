@@ -25,3 +25,5 @@ Making a custom backend for MudBlazor snippets:
 Huge thanks to the orginal authors of Blazor REPL:
 - [Kristian Mariyanov](https://github.com/kristianmariyanov)
 - [Vladislav Karamfilov](https://github.com/vladislav-karamfilov)
+
+Thanks also to [BlazorSnippet](https://github.com/BlazorSnippet/BlazorSnippet) for continuing the original REPL as Open Source.
