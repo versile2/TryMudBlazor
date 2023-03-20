@@ -7,6 +7,10 @@
 TryMudBlazor is a playground for trying out [MudBlazor](https://mudblazor.com) components entirely in the browser. <br>
 It is based on Blazor WASM - the [WebAssembly](https://webassembly.org) hosting model of [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor).
 
+## Known Issues
+
+Firefox private tabs are not supported because of restrictions put in place by Firfox private mode.
+
 ## License
 GPL 2
 
