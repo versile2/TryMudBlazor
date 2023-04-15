@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using TryMudBlazor.Client.Components;
     using TryMudBlazor.Client.Services;
+    using TryMudBlazor.Client.Models;
     using Try.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.CodeAnalysis;
@@ -94,7 +95,7 @@
         public void Dispose()
         {
             this.dotNetInstance?.Dispose();
-            this.JsRuntime.InvokeVoid("App.Repl.dispose");
+            this.JsRuntime.InvokeVoid(Try.Dispose);
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -102,13 +103,7 @@
             if (firstRender)
             {
                 this.dotNetInstance = DotNetObjectReference.Create(this);
-
-                this.JsRuntime.InvokeVoid(
-                    "App.Repl.init",
-                    "user-code-editor-container",
-                    "user-page-window-container",
-                    "user-code-editor",
-                    this.dotNetInstance);
+                this.JsRuntime.InvokeVoid(Try.Initialize, this.dotNetInstance);
             }
 
             if (!string.IsNullOrWhiteSpace(this.errorMessage))
@@ -209,10 +204,10 @@
             if (compilationResult?.AssemblyBytes?.Length > 0)
             {
                 // Make sure the DLL is updated before reloading the user page
-                await this.JsRuntime.InvokeVoidAsync("App.CodeExecution.updateUserComponentsDll", compilationResult.AssemblyBytes);
+                await this.JsRuntime.InvokeVoidAsync(Try.CodeExecution.UpdateUserComponentsDLL, compilationResult.AssemblyBytes);
 
                 // TODO: Add error page in iframe
-                this.JsRuntime.InvokeVoid("App.reloadIFrame", "user-page-window", MainUserPagePath);
+                this.JsRuntime.InvokeVoid(Try.ReloadIframe, "user-page-window", MainUserPagePath);
             }
         }
 
@@ -262,10 +257,7 @@
 
             this.CodeFiles.TryAdd(name, newCodeFile);
 
-            // TODO: update method name when refactoring the coded editor JS module
-            this.JsRuntime.InvokeVoid(
-                "App.Repl.setCodeEditorContainerHeight",
-                newCodeFile.Type == CodeFileType.CSharp ? "csharp" : "razor");
+            this.JsRuntime.InvokeVoid(Try.Editor.SetLangugage, newCodeFile.Type == CodeFileType.CSharp ? "csharp" : "razor");
         }
 
         private void UpdateActiveCodeFileContent()
@@ -286,6 +278,13 @@
             this.StateHasChanged();
 
             return Task.Delay(10); // Ensure rendering has time to be called
+        }
+
+        private async void UpdateTheme()
+        {
+            await LayoutService.ToggleDarkMode();
+            string theme = LayoutService.IsDarkMode ? "vs-dark" : "default";
+            this.JsRuntime.InvokeVoid(Try.Editor.SetTheme, theme);
         }
     }
 }
