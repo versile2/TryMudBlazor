@@ -6,29 +6,29 @@
                 <MudText Typo="Typo.body2">Please do <b>NOT</b> include any personal data.</MudText>
                 <MudText Typo="Typo.body2">Please do <b>NOT</b> include any copyrighted content.</MudText>
             </div>
-        </MudStack>
-        @if (string.IsNullOrWhiteSpace(SnippetLink))
-        {
-            <div>
-                <MudButton Color="Color.Primary" Disabled="@Loading" @onclick="SaveAsync" Class="ml-n1">Confirm</MudButton>
-
+            @if (string.IsNullOrEmpty(SnippetLink))
+            {
                 @if (Loading)
                 {
-                    <div class="spinner-border save-snippet-loader" role="status">
-                        <span class="sr-only"></span>
+                    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4" />
+                }
+                else
+                {
+                    <div>
+                        <MudButton Color="Color.Primary" Disabled="@Loading" @onclick="SaveAsync" Class="ml-n1">Confirm</MudButton>
                     </div>
                 }
-            </div>
-        }
-        else
-        {
-            <MudStack Spacing="1" Row="true" AlignItems="AlignItems.Center">
-                <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Value="SnippetLink" ReadOnly="true" Class="try-save-snippet-input" />
-                <MudIconButton Icon="@(SnippetLinkCopied ? Icons.Material.Outlined.DoneAll : Icons.Material.Outlined.ContentCopy)" OnClick="CopyLinkToClipboard" Class="pa-2" Edge="Edge.End" />
-            </MudStack>
-        }
+            }
+            else
+            {
+                <MudStack Spacing="1" Row="true" AlignItems="AlignItems.Center">
+                    <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Value="SnippetLink" ReadOnly="true" Class="try-save-snippet-input" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.FileCopy" Size="Size.Small" OnClick="CopyLinkToClipboard" Class="pa-2 mr-n3" />
+                </MudStack>
+            }
+        </MudStack>
     </MudPopover>
-    <MudOverlay Visible="Visible" OnClick="@(() => VisibleChanged.InvokeAsync(false))" />
+    <MudOverlay Visible="Visible" OnClick="OnClose" />
 </div>
 
 

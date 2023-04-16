@@ -35,35 +35,28 @@ namespace TryMudBlazor.Client.Components
         public EventCallback<bool> VisibleChanged { get; set; }
 
         [Parameter]
-        public string InvokerId { get; set; }
-
-        [Parameter]
         public IEnumerable<CodeFile> CodeFiles { get; set; } = Enumerable.Empty<CodeFile>();
 
         [Parameter]
         public Action UpdateActiveCodeFileContentAction { get; set; }
 
         private bool Loading { get; set; }
-
         private string SnippetLink { get; set; }
-        private bool SnippetLinkCopied { get; set; }
 
         private async Task CopyLinkToClipboard()
         {
             await JsApiService.CopyToClipboardAsync(SnippetLink);
-            SnippetLinkCopied = true;
         }
 
         private async Task SaveAsync()
         {
-            this.Loading = true;
+            Loading = true;
 
             try
             {
                 this.UpdateActiveCodeFileContentAction?.Invoke();
 
                 var snippetId = await this.SnippetsService.SaveSnippetAsync(this.CodeFiles);
-
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"snippet/{snippetId}" };
                 this.SnippetLink = urlBuilder.Uri.ToString();
                 this.JsRuntime.InvokeVoid(Try.ChangeDisplayUrl, SnippetLink);
@@ -78,8 +71,16 @@ namespace TryMudBlazor.Client.Components
             }
             finally
             {
-                this.Loading = false;
+                Loading = false;
             }
+        }
+
+        private async void OnClose()
+        {
+            Loading = false;
+            SnippetLink = string.Empty;
+
+            await VisibleChanged.InvokeAsync(false);
         }
     }
 }
