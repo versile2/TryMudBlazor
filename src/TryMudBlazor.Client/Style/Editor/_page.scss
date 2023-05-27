@@ -89,6 +89,9 @@
         }
 
         .mud-toolbar{
+            height: 24px;
+            min-height: unset;
+            flex-wrap: nowrap;
             padding-left: 6px;
             padding-right: 6px;
         }
