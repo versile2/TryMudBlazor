@@ -1,7 +1,6 @@
 ﻿namespace Try.Core
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.ComponentModel.DataAnnotations;
@@ -25,16 +24,18 @@
         public const string DefaultRootNamespace = $"{nameof(Try)}.{nameof(UserComponents)}";
 
         private const string WorkingDirectory = "/TryMudBlazor/";
-        private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
-@using System.Linq
-@using System.Net.Http
-@using System.Net.Http.Json
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.JSInterop
-@using MudBlazor
-";
+        private static readonly string[] DefaultImports =
+        [
+            "@using System.ComponentModel.DataAnnotations",
+            "@using System.Linq",
+            "@using System.Net.Http",
+            "@using System.Net.Http.Json",
+            "@using Microsoft.AspNetCore.Components.Forms",
+            "@using Microsoft.AspNetCore.Components.Routing",
+            "@using Microsoft.AspNetCore.Components.Web",
+            "@using Microsoft.JSInterop",
+            "@using MudBlazor"
+        ];
 
         private const string MudBlazorServices = @"
 <MudDialogProvider FullWidth=""true"" MaxWidth=""MaxWidth.ExtraSmall"" />
@@ -53,9 +54,8 @@
             ConfigurationName: "Blazor",
             Extensions: ImmutableArray<RazorExtension>.Empty);
 
-        public static async Task InitAsync(HttpClient httpClient)
+        public static async Task InitAsync(Func<IReadOnlyCollection<string>, ValueTask<IReadOnlyList<byte[]>>> getReferencedDllsBytesFunc)
         {
-
             var basicReferenceAssemblyRoots = new[]
             {
                 typeof(Console).Assembly, // System.Console
@@ -71,23 +71,16 @@
                 typeof(WebAssemblyHostBuilder).Assembly, // Microsoft.AspNetCore.Components.WebAssembly
                 typeof(FluentValidation.AbstractValidator<>).Assembly,
             };
+            var assemblyNames = await getReferencedDllsBytesFunc(basicReferenceAssemblyRoots
+                .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(
+                [
+                    assembly.GetName()
+                ]))
+                .Select(assemblyName => assemblyName.Name)
+                .ToHashSet());
 
-            var assemblyNames = basicReferenceAssemblyRoots
-                .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
-                .Select(x => x.Name)
-                .Distinct()
-                .ToList();
-
-            var assemblyStreams = await GetStreamFromHttpAsync(httpClient, assemblyNames);
-
-            var allReferenceAssemblies = assemblyStreams.ToDictionary(a => a.Key, a => MetadataReference.CreateFromStream(a.Value));
-
-            var basicReferenceAssemblies = allReferenceAssemblies
-                .Where(a => basicReferenceAssemblyRoots
-                    .Select(x => x.GetName().Name)
-                    .Union(basicReferenceAssemblyRoots.SelectMany(y => y.GetReferencedAssemblies().Select(z => z.Name)))
-                    .Any(n => n == a.Key))
-                .Select(a => a.Value)
+            var basicReferenceAssemblies = assemblyNames
+                .Select(peImage => MetadataReference.CreateFromImage(peImage, MetadataReferenceProperties.Assembly))
                 .ToList();
 
             _baseCompilation = CSharpCompilation.Create(
@@ -112,10 +105,7 @@
             ICollection<CodeFile> codeFiles,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
-            if (codeFiles == null)
-            {
-                throw new ArgumentNullException(nameof(codeFiles));
-            }
+            ArgumentNullException.ThrowIfNull(codeFiles);
 
             var cSharpResults = await this.CompileToCSharpAsync(codeFiles, updateStatusFunc);
 
@@ -123,25 +113,6 @@
             var result = CompileToAssembly(cSharpResults);
 
             return result;
-        }
-
-        private static async Task<IDictionary<string, Stream>> GetStreamFromHttpAsync(
-            HttpClient httpClient,
-            IEnumerable<string> assemblyNames)
-        {
-            var streams = new ConcurrentDictionary<string, Stream>();
-
-            await Task.WhenAll(
-                assemblyNames.Select(async assemblyName =>
-                {
-                    var result = await httpClient.GetAsync($"/_framework/{assemblyName}.dll");
-
-                    result.EnsureSuccessStatusCode();
-
-                    streams.TryAdd(assemblyName, await result.Content.ReadAsStreamAsync());
-                }));
-
-            return streams;
         }
 
         private static CompileToAssemblyResult CompileToAssembly(IReadOnlyList<CompileToCSharpResult> cSharpResults)
@@ -288,16 +259,16 @@
         }
 
         private RazorProjectEngine CreateRazorProjectEngine(IReadOnlyList<MetadataReference> references) =>
-            RazorProjectEngine.Create(configuration, fileSystem, b =>
+            RazorProjectEngine.Create(configuration, fileSystem, builder =>
             {
-                b.SetRootNamespace(DefaultRootNamespace);
-                b.AddDefaultImports(DefaultImports);
+                builder.SetRootNamespace(DefaultRootNamespace);
+                builder.AddDefaultImports(DefaultImports);
 
                 // Features that use Roslyn are mandatory for components
-                CompilerFeatures.Register(b);
+                CompilerFeatures.Register(builder);
 
-                b.Features.Add(new CompilationTagHelperFeature());
-                b.Features.Add(new DefaultMetadataReferenceFeature { References = references });
+                builder.Features.Add(new CompilationTagHelperFeature());
+                builder.Features.Add(new DefaultMetadataReferenceFeature { References = references });
             });
     }
 }
