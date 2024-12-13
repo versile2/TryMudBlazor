@@ -38,4 +38,5 @@ COPY --from=build /app/out/wwwroot /usr/share/nginx/html
 # docker build -t trymudblazorserver .
 # docker run --name trymudblazorserver -d -p 5002:8080 trymudblazorserver
 # docker tag trymudblazorserver:latest amyraymoving/customtryblazor:latest
+# docker login -u amyraymoving -p <password>exit
 # docker push amyraymoving/customtryblazor:latest
