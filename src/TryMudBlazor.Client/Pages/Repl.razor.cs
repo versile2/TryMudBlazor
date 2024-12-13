@@ -77,7 +77,7 @@
             get
             {
                 var v = typeof(MudText).Assembly.GetName().Version;
-                return $"v{v.Major}.{v.Minor}.{v.Build}";
+                return $"v-versile2";
             }
         }
 

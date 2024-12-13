@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.CodeAnalysis.Razor.Test</AssemblyName>
+      <TargetFrameworks>net9.0</TargetFrameworks>
     <KeyOriginatorFile>$(PkgMicrosoft_DotNet_Arcade_Sdk)\tools\snk\AspNetCore.snk</KeyOriginatorFile>
   </PropertyGroup>
 
@@ -10,7 +11,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
-    <PackageReference Include="MudBlazor" Version="*" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0-2.24555.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.13.0-2.24555.1" />
     <PackageReference Include="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24372.7" PrivateAssets="all" IncludeAssets="none" GeneratePathProperty="true" />
@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
     <ProjectReference Include="..\UserComponents\Try.UserComponents.csproj" />
   </ItemGroup>
 

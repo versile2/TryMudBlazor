@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+<li class="@Classname">
+    @if (Parent?.ItemTemplate is null)
+    {
+        <a href="@(Item?.Href ?? "#")">
+            @if (Item?.Icon != null)
+            {
+                <MudIcon Icon="@Item?.Icon" Size="Size.Small" />
+            }
+            @Item?.Text
+        </a>
+    }
+    else
+    {
+        @Parent?.ItemTemplate(Item)
+    }
+</li>

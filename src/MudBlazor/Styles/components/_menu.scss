@@ -1,0 +1,27 @@
+.mud-menu {
+  display: inline-flex;
+  align-self: center;
+  position: relative;
+
+  & * {
+    cursor: pointer;
+  }
+
+  & > div.mud-disabled {
+    cursor: default;
+
+    & * {
+      cursor: default;
+    }
+  }
+
+  & > div.mud-menu-activator {
+    display: contents;
+    user-select: none;
+  }
+}
+
+.mud-menu-button-hidden {
+  /* this ensures that the menu div doesn't use any space in the layout */
+  position: absolute;
+}

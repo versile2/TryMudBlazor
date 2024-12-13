@@ -1,0 +1,18 @@
+﻿@*
+    Copyright (c) Alessandro Ghidini. All rights reserved.
+    Changes and improvements Copyright (c) The MudBlazor Team.
+*@
+
+@namespace MudBlazor
+@inherits MudComponentBase
+
+@{
+    #nullable enable
+}
+
+<div @attributes="UserAttributes" id="mud-snackbar-container" class="@Classname" style="@Style">
+    @foreach (var snackbar in Snackbar)
+    {
+        <MudSnackbarElement @key="snackbar" Snackbar="@snackbar"></MudSnackbarElement>
+    }
+</div>
