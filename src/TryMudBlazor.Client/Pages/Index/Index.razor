@@ -152,5 +152,12 @@
 </MudLayout>
 
 @code { 
-    string Version { get { var v = typeof(MudText).Assembly.GetName().Version; return $"v-versile2"; } } 
+    private string Version
+    {
+        get
+        {
+            //var v = typeof(MudText).Assembly.GetName().Version;
+            return $"{DateTimeVersion.LatestVersion}";
+        }
+    }
 }

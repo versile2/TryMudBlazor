@@ -76,8 +76,8 @@
         {
             get
             {
-                var v = typeof(MudText).Assembly.GetName().Version;
-                return $"v-versile2";
+                //var v = typeof(MudText).Assembly.GetName().Version;
+                return $"{DateTimeVersion.LatestVersion}";
             }
         }
 
