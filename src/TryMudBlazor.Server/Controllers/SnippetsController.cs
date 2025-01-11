@@ -1,7 +1,9 @@
-﻿using Azure.Identity;
-using Azure.Storage;
-using Azure.Storage.Blobs;
+﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using TryMudBlazor.Server.Data;
+using TryMudBlazor.Server.Data.Models;
 using static TryMudBlazor.Server.Utilities.SnippetsEncoder;
 
 namespace TryMudBlazor.Server.Controllers;
@@ -10,56 +12,50 @@ namespace TryMudBlazor.Server.Controllers;
 [ApiController]
 public class SnippetsController : ControllerBase
 {
-    private readonly BlobContainerClient _containerClient;
+    private readonly ApplicationDbContext _context;
 
-    public SnippetsController(IConfiguration config)
+    public SnippetsController(IDbContextFactory<ApplicationDbContext> contextFactory)
     {
-        var snippetsContainerUrl = config["SnippetsContainerUrl"];
-        var accessKey = config["SnippetsAccessKey"];
-
-        if (string.IsNullOrEmpty(snippetsContainerUrl) || string.IsNullOrEmpty(accessKey))
-        {
-            throw new Exception("Please configure SnippetsContainerUrl and SnippetsAccessKey in appsettings.json");
-        }
-
-        var containerUri = new Uri(snippetsContainerUrl);
-
-        if (accessKey == "secret")
-        {
-            var defaultAzureCredentialOptions = new DefaultAzureCredentialOptions
-            {
-                ManagedIdentityClientId = config["ManagedCredentialsId"]
-            };
-            _containerClient = new BlobContainerClient(containerUri,
-                new DefaultAzureCredential(defaultAzureCredentialOptions));
-        }
-        else
-        {
-            var blobUri = new BlobUriBuilder(containerUri);
-            var accountName = blobUri.AccountName;
-            var key = new StorageSharedKeyCredential(accountName, accessKey);
-            _containerClient = new BlobContainerClient(containerUri, key);
-        }
+        _context = contextFactory.CreateDbContext();
     }
 
     [HttpGet("{snippetId}")]
     public async Task<IActionResult> Get(string snippetId)
     {
         snippetId = DecodeSnippetId(snippetId);
-        var blob = _containerClient.GetBlobClient(BlobPath(snippetId));
-        var response = await blob.DownloadAsync();
-        var zipStream = new MemoryStream();
-        await response.Value.Content.CopyToAsync(zipStream);
-        zipStream.Position = 0;
+        var snippet = await _context.SnippetBlobs.FindAsync(snippetId);
 
-        return File(zipStream, "application/octet-stream", "snippet.zip");
+        if (snippet == null)
+            return NotFound();
+
+        var memoryStream = new MemoryStream(snippet.Content);
+        return File(memoryStream, "application/octet-stream", "snippet.zip");
     }
 
     [HttpPost]
     public async Task<IActionResult> Post()
     {
         var newSnippetId = NewSnippetId();
-        await _containerClient.UploadBlobAsync(BlobPath(newSnippetId), Request.Body);
+
+        using var memoryStream = new MemoryStream();
+        await Request.Body.CopyToAsync(memoryStream);
+
+        var snippet = new SnippetBlob
+        {
+            Id = newSnippetId,
+            Content = memoryStream.ToArray(),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.SnippetBlobs.Add(snippet);
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex) 
+        { 
+            return BadRequest(ex.Message);
+        }        
 
         return Ok(EncodeSnippetId(newSnippetId));
     }
@@ -75,15 +71,9 @@ public class SnippetsController : ControllerBase
         return $"{yearFolder:0000}{monthFolder:00}{dayFolder:00}{snippetTime:D8}";
     }
 
-    private static string BlobPath(string snippetId)
+    [HttpGet("test")]
+    public IActionResult Test()
     {
-        var yearFolder = snippetId.Substring(0, 4);
-        var monthFolder = snippetId.Substring(4, 2);
-        var dayFolder = snippetId.Substring(6, 2);
-        var time = snippetId.Substring(8);
-        var snippetFolder = $"{yearFolder:0000}/{monthFolder:00}/{dayFolder:00}";
-        var snippetTime = $"{time:00000000}";
-
-        return $"{snippetFolder}/{snippetTime}";
+        return Ok("API is working");
     }
 }

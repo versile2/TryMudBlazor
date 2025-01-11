@@ -18,7 +18,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05C7416B-1168-47EF-A544-9FF8D88AE430}"
 	ProjectSection(SolutionItems) = preProject
 		Dockerfile = Dockerfile
-		nginx.conf = nginx.conf
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{0A6E7394-6C3A-4EA7-B946-93050F9A169D}"

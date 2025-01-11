@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Examples.Data;
+using TryMudBlazor.Server.Data;
 
 namespace TryMudBlazor.Server;
 
@@ -7,7 +9,13 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+
         builder.Services.AddScoped<IPeriodicTableService, PeriodicTableService>();
+
+        builder.Services.AddDbContextFactory<ApplicationDbContext>(cfg => cfg.UseNpgsql(connString));
+
         builder.Services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
