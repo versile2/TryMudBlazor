@@ -34,6 +34,8 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 CMD ["dotnet", "TryMudBlazor.Server.dll"]
 
+#              *** Don't forget to update appsettings.json with your own connection string ***
+
 # docker build -t trymudblazorserver .
 # docker tag trymudblazorserver:latest amyraymoving/trymudblazorserver:latest
 # docker push amyraymoving/trymudblazorserver:latest
