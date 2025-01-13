@@ -1,5 +1,5 @@
 ﻿@inherits MudFormComponent<T, string>
-@inject InternalMudLocalizer Localizer
+
 @typeparam T
 @namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
@@ -11,76 +11,34 @@
         {
             var localIndex = index;
             <InputFile @key="@localIndex"
-            OnChange="OnChangeAsync"
-            class="@GetInputClass(localIndex)"
-            style="@InputStyle"
-            hidden="@(Hidden && !_draggingState.Value ? "" : null)"
-            multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
-            accept="@Accept"
-            disabled="@(GetDisabledState())"
-            @attributes="UserAttributes"
-            @ondrop="@(() => _draggingState.SetValueAsync(false))"
-            @ondragleave="@(() => _draggingState.SetValueAsync(false))"
-            @ondragend="@(() => _draggingState.SetValueAsync(false))"
-            id="@GetInputId(localIndex)"
-            required="@Required"
-            aria-required="@Required.ToString().ToLowerInvariant()" />
+                       OnChange="OnChangeAsync"
+                       class="@GetInputClass(localIndex)"
+                       style="@InputStyle"
+                       hidden="@(Hidden ? "" : null)"
+                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                       accept="@Accept"
+                       disabled="@(GetDisabledState())"
+                       @attributes="UserAttributes"
+                       id="@GetInputId(localIndex)"
+                       required="@Required"
+                       aria-required="@Required.ToString().ToLowerInvariant()" />
         }
-        @if (CustomContent == null)
-        {         
-            @if (DragAndDrop)
-            {
-                <MudPaper Outlined="true" 
-                @onclick="@(GetDisabledState() ? null : OpenFilePickerAsync)"
-                @ondragenter="@(GetDisabledState() ? null : () => _draggingState.SetValueAsync(true))"
-                Class="@DragClass">
-                    <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
-                    <MudText Color="@(GetDisabledState() ? Color.Default : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
-                </MudPaper>
-            }
-            else
-            {
-                <MudButton Variant="Variant.Filled" 
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                           Disabled="GetDisabledState()"
-                           OnClick="@OpenFilePickerAsync">
-                    @Localizer[Resources.LanguageResource.MudFileUpload_Button]
-                </MudButton>
-            }
-        }
-        else
+        @if (ActivatorContent != null)
         {
-            <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
-                <div disabled="@GetDisabledState()">
-                    @CustomContent(this)
-                </div>
+            <CascadingValue Value="@((IActivatable)this)"
+                            IsFixed="true">
+                <CascadingValue Name="ParentDisabled"
+                                Value="GetDisabledState()">
+                    <div @onclick="OpenFilePickerAsync"
+                         disabled="@GetDisabledState()">
+                        @ActivatorContent
+                    </div>
+                </CascadingValue>
             </CascadingValue>
         }
-        <div class="mud-file-upload-files mt-1">
-            @if (SelectedTemplate != null)
-            {
-                @SelectedTemplate(_filesState.Value)
-            }            
-            else
-            {
-                <!-- Make sure there is at least one file -->
-                @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
-                {
-                    <span class="mud-file-upload-filelist">
-                        @foreach (var file in GetFilenames())
-                        {
-                            <MudChip T="string"
-                                     Color="Color.Secondary"
-                                     Disabled="GetDisabledState()"
-                                     Text="@file"
-                                     CloseIcon="@Icons.Material.Outlined.Close"
-                                     OnClose="@(GetDisabledState() ? null : async () => await RemoveFile(file))"
-                                     tabindex="-1" />
-                        }
-                    </span>
-                }
-            }
-        </div>
+        @if (SelectedTemplate != null)
+        {
+            @SelectedTemplate(_filesState.Value)
+        }
     </InputContent>
 </MudInputControl>
