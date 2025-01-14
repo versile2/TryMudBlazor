@@ -5,6 +5,8 @@ WORKDIR /app
 # Copy project files
 COPY ./TryMudBlazor.Server/TryMudBlazor.Server.csproj ./TryMudBlazor.Server/
 COPY ./MudBlazor/MudBlazor.csproj ./MudBlazor/
+COPY ./MudBlazor.Docs/MudBlazor.Docs.csproj ./MudBlazor.Docs/
+COPY ./MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj ./MudBlazor.Docs.Compiler/
 COPY ./MudBlazor.Analyzers/MudBlazor.Analyzers.csproj ./MudBlazor.Analyzers/
 COPY ./MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj ./MudBlazor.SourceGenerator/
 COPY ./MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj ./MudBlazor.Examples.Data/
