@@ -43,6 +43,8 @@ namespace TryMudBlazor.Client
             builder.Services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             builder.Services.AddScoped<LayoutService>();
 
+            builder.Services.AddSingleton<ComponentService>();
+
             var jsRuntime = GetJsRuntime();
             try
             {
