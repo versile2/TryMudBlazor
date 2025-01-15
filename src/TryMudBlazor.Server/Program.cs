@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Examples.Data;
 using TryMudBlazor.Server.Data;
+using TryMudBlazor.Server.Services;
 
 namespace TryMudBlazor.Server;
 
@@ -15,6 +16,8 @@ public class Program
         builder.Services.AddScoped<IPeriodicTableService, PeriodicTableService>();
 
         builder.Services.AddDbContextFactory<ApplicationDbContext>(cfg => cfg.UseNpgsql(connString));
+
+        builder.Services.AddSingleton<ComponentService>();
 
         builder.Services.AddCors(options =>
         {

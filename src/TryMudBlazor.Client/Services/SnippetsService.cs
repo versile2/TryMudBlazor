@@ -6,6 +6,7 @@
     using System.IO.Compression;
     using System.Net.Http;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
     using Microsoft.Extensions.Options;
@@ -110,6 +111,22 @@
             }
 
             return result;
+        }
+
+        public async Task<List<ComponentExample>> GetComponentExamples()
+        {
+            var response = await this.httpClient.GetAsync($"{this.snippetsService}/componentList");
+            response.EnsureSuccessStatusCode();
+            var resultStream = await response.Content.ReadAsStreamAsync();
+
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
+            var examples = await JsonSerializer.DeserializeAsync<List<ComponentExample>>(resultStream, options);
+
+            return examples ?? new List<ComponentExample>();
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using TryMudBlazor.Server.Data;
 using TryMudBlazor.Server.Data.Models;
+using TryMudBlazor.Server.Services;
 using static TryMudBlazor.Server.Utilities.SnippetsEncoder;
 
 namespace TryMudBlazor.Server.Controllers;
@@ -13,10 +16,12 @@ namespace TryMudBlazor.Server.Controllers;
 public class SnippetsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly ComponentService _componentService;
 
-    public SnippetsController(IDbContextFactory<ApplicationDbContext> contextFactory)
+    public SnippetsController(IDbContextFactory<ApplicationDbContext> contextFactory, ComponentService componentService)
     {
         _context = contextFactory.CreateDbContext();
+        _componentService = componentService;
     }
 
     [HttpGet("{snippetId}")]
@@ -69,6 +74,23 @@ public class SnippetsController : ControllerBase
         var snippetTime = $"{time:D8}";
 
         return $"{yearFolder:0000}{monthFolder:00}{dayFolder:00}{snippetTime:D8}";
+    }
+
+    [HttpGet("componentList")]
+    public IActionResult GetComponentList()
+    {
+        if (!_componentService.IsInitialized)
+        {
+            _componentService.Initialize();
+        }
+
+        // Configure JSON serialization options
+        var options = new JsonSerializerOptions
+        {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        };
+
+        return new JsonResult(_componentService.Examples, options);
     }
 
     [HttpGet("test")]

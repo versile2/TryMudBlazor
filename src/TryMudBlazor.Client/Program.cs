@@ -41,9 +41,7 @@ namespace TryMudBlazor.Client
             builder.Services.AddMudServices();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<IUserPreferencesService, UserPreferencesService>();
-            builder.Services.AddScoped<LayoutService>();
-
-            builder.Services.AddSingleton<ComponentService>();
+            builder.Services.AddScoped<LayoutService>();            
 
             var jsRuntime = GetJsRuntime();
             try

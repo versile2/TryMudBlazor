@@ -12,7 +12,7 @@
     using Try.Core;
     using TryMudBlazor.Client.Components;
     using TryMudBlazor.Client.Models;
-    using TryMudBlazor.Client.Services;
+    using TryMudBlazor.Client.Services;    
 
     public partial class Repl : IDisposable
     {
@@ -24,6 +24,9 @@
         private DotNetObjectReference<Repl> dotNetInstance;
         private string errorMessage;
         private CodeFile activeCodeFile;
+        private bool _examplesOpen = false;
+        private bool _dockExamples = false;
+        private List<ComponentExample> _compList = [];
 
         [Inject]
         public ISnackbar Snackbar { get; set; }
@@ -66,6 +69,10 @@
 
         private bool ShowDiagnostics { get; set; }
 
+        private void ToggleExamples()
+        {
+            _examplesOpen = !_examplesOpen;
+        }
         private void ToggleDiagnostics()
         {
             ShowDiagnostics = !ShowDiagnostics;
@@ -153,6 +160,20 @@
             this.CodeFileNames = this.CodeFiles.Keys.ToList();
 
             await base.OnInitializedAsync();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _compList = await SnippetsService.GetComponentExamples();                
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private void CopyExample(ComponentExample comp)
+        {
+
         }
 
         private async Task CompileAsync()

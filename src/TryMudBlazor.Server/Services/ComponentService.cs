@@ -1,28 +1,26 @@
-﻿using System.Text.RegularExpressions;
-using TryMudBlazor.Client.Models;
-
-namespace TryMudBlazor.Client.Services
+﻿namespace TryMudBlazor.Server.Services
 {
+    using System.Text.RegularExpressions;
+    using Try.Core;
+
     public class ComponentService
     {
-        private readonly string _basePath = "MudBlazor.Docs/Pages/Components";
-        public List<ComponentExample> Examples { get; private set; }
-        public string[] Components { get; private set; }
+        private readonly string _basePath = "../MudBlazor.Docs/Pages/Components";
+        public bool IsInitialized { get; private set; } = false;
+        public List<ComponentExample> Examples { get; private set; } = [];
 
-        public ComponentService()
+        public void Initialize()
         {
-            Examples = new List<ComponentExample>();
             LoadComponents();
         }
 
         private void LoadComponents()
-        {
+        {            
             var componentDirs = Directory.GetDirectories(_basePath);
-            Components = componentDirs.Select(Path.GetFileName).ToArray();
 
             foreach (var componentDir in componentDirs)
             {
-                var componentName = Path.GetFileName(componentDir);
+                var componentShortName = Path.GetFileName(componentDir);
                 var examplesDir = Path.Combine(componentDir, "Examples");
 
                 if (Directory.Exists(examplesDir))
@@ -30,17 +28,17 @@ namespace TryMudBlazor.Client.Services
                     // First create dictionary of example names to their titles from the main page
                     var exampleTitles = new Dictionary<string, string>();
                     var mainPageFile = Directory.GetFiles(componentDir, "*.razor")
-                                              .FirstOrDefault(f => !f.Contains("Examples"));
-                    
+                                              .FirstOrDefault(f => !f.Contains("Page"));
+
                     if (mainPageFile != null)
                     {
                         var pageContent = File.ReadAllText(mainPageFile);
                         var sectionMatches = Regex.Matches(pageContent, @"<DocsPageSection>.*?</DocsPageSection>", RegexOptions.Singleline);
-                        
+
                         foreach (Match sectionMatch in sectionMatches)
                         {
                             var section = sectionMatch.Value;
-                            
+
                             // Extract Title
                             var titleMatch = Regex.Match(section, @"<SectionHeader\s+Title=""([^""]+)""");
                             var title = titleMatch.Success ? titleMatch.Groups[1].Value : string.Empty;
@@ -64,25 +62,22 @@ namespace TryMudBlazor.Client.Services
                     {
                         var fileName = Path.GetFileNameWithoutExtension(exampleFile);
                         // Extract short name by removing "Example" suffix
-                        var shortName = fileName.EndsWith("Example") 
-                            ? fileName.Substring(0, fileName.Length - "Example".Length) 
+                        var shortName = fileName.EndsWith("Example")
+                            ? fileName.Substring(0, fileName.Length - "Example".Length)
                             : fileName;
-
+                        // Get content
+                        var exampleContent = File.ReadAllText(exampleFile);
                         Examples.Add(new ComponentExample
                         {
-                            FullName = exampleTitles.TryGetValue(fileName, out var title) ? title : componentName,
+                            ComponentName = componentShortName,
+                            ExampleFullName = exampleTitles.TryGetValue(fileName, out var title) ? title : componentShortName,
                             ExampleShortName = shortName,
-                            ExampleFullName = fileName,
+                            ExampleFileName = fileName,
+                            ExampleContent = exampleContent,
                         });
                     }
                 }
             }
-        }
-
-        public string GetExampleContent(string componentName, string exampleName)
-        {
-            var filePath = Path.Combine(_basePath, componentName, "Examples", $"{exampleName}Example.razor");
-            return File.Exists(filePath) ? File.ReadAllText(filePath) : string.Empty;
         }
     }
 }
