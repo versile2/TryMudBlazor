@@ -12,7 +12,7 @@
     using Try.Core;
     using TryMudBlazor.Client.Components;
     using TryMudBlazor.Client.Models;
-    using TryMudBlazor.Client.Services;    
+    using TryMudBlazor.Client.Services;
 
     public partial class Repl : IDisposable
     {
@@ -27,6 +27,11 @@
         private bool _examplesOpen = false;
         private bool _dockExamples = false;
         private List<ComponentExample> _compList = [];
+        private string _compSearch = string.Empty;
+        private bool _overlayExamples = false;
+        private bool _staticAssetsOpen = false;
+        private bool _dockStaticAssets = false;
+        private string[] cdnORjsFiles = ["https://code.jquery.com/jquery-3.7.1.slim.min.js", "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"];
 
         [Inject]
         public ISnackbar Snackbar { get; set; }
@@ -63,16 +68,51 @@
 
         private bool AreDiagnosticsShown { get; set; }
 
-        private string LoaderText { get; set; }
+        private string LoaderText { get; set; } = "Loading";
 
-        private bool Loading { get; set; }
+        private bool Loading { get; set; } = true;
 
         private bool ShowDiagnostics { get; set; }
 
         private void ToggleExamples()
         {
             _examplesOpen = !_examplesOpen;
+            _dockExamples = false;
+            UpdateOverlay();
         }
+
+        private void ToggleStaticAssets()
+        {
+            _staticAssetsOpen = !_staticAssetsOpen;
+            _dockStaticAssets = false;
+            UpdateOverlay();
+        }
+
+        private void ToggleDock(string docType)
+        {
+            if (docType == "examples")
+            {
+                _dockExamples = !_dockExamples;
+            }
+            else if (docType == "assets")
+            {
+                _dockStaticAssets = !_dockStaticAssets;
+            }
+            UpdateOverlay();
+        }
+
+        private void OverlayClicked()
+        {
+            _overlayExamples = false;
+            UpdateOverlay();
+        }
+
+        private void UpdateOverlay()
+        {
+            if (!_dockExamples && _examplesOpen) _overlayExamples = true;
+            if (!_dockStaticAssets && _staticAssetsOpen) _overlayExamples = true;
+        }
+
         private void ToggleDiagnostics()
         {
             ShowDiagnostics = !ShowDiagnostics;
@@ -100,23 +140,6 @@
         {
             this.dotNetInstance?.Dispose();
             this.JsRuntime.InvokeVoid(Try.Dispose);
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender)
-            {
-                this.dotNetInstance = DotNetObjectReference.Create(this);
-                this.JsRuntime.InvokeVoid(Try.Initialize, this.dotNetInstance);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.errorMessage))
-            {
-                Snackbar.Add(this.errorMessage, Severity.Error);
-                this.errorMessage = null;
-            }
-
-            base.OnAfterRender(firstRender);
         }
 
         protected override async Task OnInitializedAsync()
@@ -166,14 +189,57 @@
         {
             if (firstRender)
             {
-                _compList = await SnippetsService.GetComponentExamples();                
+                this.dotNetInstance = DotNetObjectReference.Create(this);
+                await this.JsRuntime.InvokeVoidAsync(Try.Initialize, this.dotNetInstance);
+                _compList = await SnippetsService.GetComponentExamples();
+                Loading = false;
+                StateHasChanged();
+                await Task.Yield();
             }
+
+            if (!string.IsNullOrWhiteSpace(this.errorMessage))
+            {
+                Snackbar.Add(this.errorMessage, Severity.Error);
+                this.errorMessage = null;
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
         private void CopyExample(ComponentExample comp)
         {
+            // Clear existing files
+            CodeFiles.Clear();
 
+            // Add main example file
+            var mainFile = new CodeFile
+            {
+                Path = CoreConstants.MainComponentFilePath,
+                Content = comp.AssociatedFiles[0].Content,
+            };
+            CodeFiles[mainFile.Path] = mainFile;
+
+            // Process associated files, skipping the first one
+            for (int i = 1; i < comp.AssociatedFiles.Count; i++)
+            {
+                var file = comp.AssociatedFiles[i];
+                var associatedFile = new CodeFile
+                {
+                    Path = file.FileName,
+                    Content = file.Content
+                };
+                CodeFiles[associatedFile.Path] = associatedFile;
+            }
+
+
+            // Update active file to main component
+            activeCodeFile = mainFile;
+            CodeFileNames = CodeFiles.Keys.ToList();
+
+            if (!_dockExamples)
+            {
+                ToggleExamples();
+            }
         }
 
         private async Task CompileAsync()
@@ -194,7 +260,13 @@
                 if (this.CodeFiles.TryGetValue(CoreConstants.MainComponentFilePath, out mainComponent))
                 {
                     originalMainComponentContent = mainComponent.Content;
-                    mainComponent.Content = MainComponentCodePrefix + originalMainComponentContent.Replace(MainComponentCodePrefix, "");
+                    var cdnContent = string.Join("\n", cdnORjsFiles.Select(file =>
+                        file.EndsWith(".css", StringComparison.OrdinalIgnoreCase)
+                            ? $"<link href=\"{file}\" rel=\"stylesheet\" />"
+                            : file.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                                ? $"<script src=\"{file}\"></script>"
+                                : string.Empty));
+                    mainComponent.Content = MainComponentCodePrefix + cdnContent + "\n" + originalMainComponentContent.Replace(MainComponentCodePrefix, "");
                 }
 
                 compilationResult = await this.CompilationService.CompileToAssemblyAsync(

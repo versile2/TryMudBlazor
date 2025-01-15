@@ -1,5 +1,23 @@
-﻿namespace Try.Core
+﻿﻿﻿﻿namespace Try.Core
 {
+    public class ComponentFile
+    {
+        /// <summary>
+        /// The short name of the file (e.g. 'Dialog' for DialogExample_Dialog)
+        /// </summary>
+        public string ShortName { get; set; }
+
+        /// <summary>
+        /// The full filename of the file
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// The content of the file
+        /// </summary>
+        public string Content { get; set; }
+    }
+
     public class ComponentExample
     {
         /// <summary>
@@ -16,13 +34,8 @@
         public string ExampleShortName { get; set; }
 
         /// <summary>
-        /// The full filename of the ...Example.razor file looked up in the root directory
+        /// Additional files associated with this example (e.g. dialog components)
         /// </summary>
-        public string ExampleFileName { get; set; }
-
-        /// <summary>
-        /// The code of the Example.razor file
-        /// </summary>
-        public string ExampleContent { get; set; }
+        public List<ComponentFile> AssociatedFiles { get; set; } = new();
     }
 }

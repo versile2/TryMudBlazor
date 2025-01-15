@@ -3,23 +3,87 @@
 
 <style>
     .mud-drawer-mini {
-    z-index: calc(var(--mud-zindex-drawer) + 1);
+    z-index: calc(var(--mud-zindex-drawer) + 2);
     }
 
-    .drawer-examples.mud-drawer--open {
-    left: calc(var(--mud-drawer-width-mini-left) + 2px) !important;
+    .mud-drawer-one {
+        left: calc(var(--mud-drawer-width-mini-left) + 2px) !important;
+        z-index: calc(var(--mud-zindex-drawer) + 2);
+    }
+
+    .mud-drawer-two {
+        left: calc(var(--mud-drawer-width-mini-left) + var(--mud-drawer-width-left) + 4px) !important;
     }
 
     .dock-padding {
     padding-left: var(--mud-drawer-width, var(--mud-drawer-width-left));
     }
+
+    .force-mini {
+        width: var(--mud-drawer-width-mini-left) !important;
+    }
+
+    .try-component-menu {
+        width: 100%;
+    }
+
+    .try-component-menu > button {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        background-color: white;
+        border-radius: var(--mud-default-borderradius);
+        padding: 6px 10px;
+    }
+
+    .try-component-menu > button:hover {
+        background-color: #f0f0f0;
+    }
+
+    .try-component-boxes {
+        width: 92%;
+        margin-top: 6px;
+        margin-bottom: 3px;
+    }
+    /* Force input to use Text Color for Highlights */
+    .try-component-boxes .mud-input {
+        /* This falls back to the base from(currentColor)
+            * Base support is 78% with 13% missing from browsers like Opera
+            * This provides fallback support making the text from 0.8 to 1 opacity
+            */
+        color: currentColor;
+    }
+
+    .try-component-boxes .mud-input-control > .mud-input-control-input-container > .mud-input-label-inputcontrol {
+        color: hsl(from currentColor h s l / 0.8);
+    }
+
+    .try-component-boxes .mud-input > input.mud-input-root,
+    .try-component-boxes div.mud-input-slot.mud-input-root {
+        color: hsl(from currentColor h s l / 1);
+    }
+
+    .try-component-boxes .mud-input:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
+        color: currentColor
+    }
+
+    .try-component-boxes .mud-input.mud-input-outlined:focus-within .mud-input-outlined-border {
+        border-color: currentColor
+    }
+
+    .try-component-boxes .mud-input.mud-input-filled.mud-input-underline:after {
+        border-color: currentColor;
+    }
 </style>
 <div class="@($"{(_dockExamples ? "try-layout dock-padding" : "try-layout")}")">
-    <MudDrawer Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer">
+    <MudDrawer Open="true" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer force-mini">
         <MudIconButton title="Run (Ctrl + S)" OnClick="@CompileAsync" Disabled="@Loading" Icon="@Icons.Material.Rounded.PlayArrow" Color="@(LayoutService.IsDarkMode ? Color.Success : Color.Inherit)" />
         <MudTooltip Text="Save or Share" Delay="800" Arrow="true" Placement="Placement.Right" Color="Color.Dark">
             <SaveSnippetPopup @bind-Visible="SaveSnippetPopupVisible" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent" />
             <MudIconButton OnClick="ShowSaveSnippetPopup" Icon="@Icons.Material.Outlined.Save" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
+        </MudTooltip>
+        <MudTooltip Text="Static Assets" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
+            <MudIconButton OnClick="@ToggleStaticAssets" Icon="@Icons.Material.Filled.DocumentScanner" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
         </MudTooltip>
         <MudTooltip Text="Doc Examples" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
             <MudIconButton OnClick="@ToggleExamples" Icon="@Icons.Material.Filled.SettingsInputComponent" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
@@ -43,39 +107,77 @@
             <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">R</MudAvatar>
         </MudStack>
     </MudDrawer>
-    <MudDrawer @bind-Open="@_examplesOpen" Anchor="Anchor.Start" ClipMode="DrawerClipMode.Docked" Variant="DrawerVariant.Persistent" OverlayAutoClose="@(_dockExamples ? false : true)" Elevation="1" Class="try-drawer drawer-examples">
-        <MudStack Class="pa-3" Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-            <MudText Typo="Typo.h6">Doc Examples</MudText>
-            <MudIconButton Class="ma-0 pa-0"
-            Icon="@(_dockExamples ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowDropDown)"
-            OnClick="@(() => _dockExamples = !_dockExamples)" />
-        </MudStack>
-        @if (_compList.Any())
-        {
-            @foreach (var main in _compList.Select(x => x.ComponentName).Distinct().ToList())
+    @if (_examplesOpen)
+    {
+        <MudDrawer Open="true" Anchor="Anchor.Start" ClipMode="DrawerClipMode.Docked" Variant="@DrawerVariant.Temporary"
+                   Overlay="false"
+                   Class="@(!_staticAssetsOpen ? "mud-drawer-one try-drawer" :
+                                                 "mud-drawer-two try-drawer")"
+                   Elevation="1">
+            <MudStack Class="pa-3" Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.h6">Doc Examples</MudText>
+                <MudIconButton Class="ma-0 pa-0"
+                               Icon="@(_dockExamples ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowDropDown)"
+                               OnClick="@(() => ToggleDock("examples"))" />
+            </MudStack>
+            @if (_compList.Any())
             {
-                <MudPaper Elevation="1" Class="d-flex justify-space-around">
-                    <MudMenu Label="@main" EndIcon="@Icons.Material.Filled.Add">
-                        @foreach (var comp in _compList.Where(x => x.ComponentName == main).ToList())
-                        {
-                            <MudMenuItem Label="@comp.ExampleFullName" OnClick="@(() => CopyExample(comp))" />
-                        }
-                    </MudMenu>
+                <div class="try-component-boxes">
+                    <MudTextField @bind-Value="@_compSearch"
+                                  Label="Search"
+                                  Margin="Margin.Dense"
+                                  Variant="Variant.Filled"
+                                  Adornment="@Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  Class="ml-3"
+                                  Style="width: 102%;"
+                                  Immediate Clearable />
+                </div>
+                @foreach (var main in _compList.Where(x => x.ComponentName.Contains(_compSearch, StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.ComponentName).Select(x => x.ComponentName).Distinct().ToList())
+                {
+                    <div class="try-component-boxes">
+                        <MudMenu Label="@main"
+                                 AnchorOrigin="@Origin.TopRight"
+                                 EndIcon="@Icons.Material.Filled.Add"
+                                 Class="mx-2 pa-1 try-component-menu">
+                            @foreach (var comp in _compList.Where(x => x.ComponentName == main).ToList())
+                            {
+                                <MudMenuItem Label="@comp.ExampleFullName" OnClick="@(() => CopyExample(comp))" />
+                            }
+                        </MudMenu>
+                    </div>
+                }
+            }
+            else
+            {
+                <MudPaper Class="ma-6" Elevation="0">
+                    <MudSkeleton />
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Height="100px" />
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="100%" />
                 </MudPaper>
             }
-        }
-        else
-        {
-            <MudPaper Class="ma-6" Elevation="0">
-                <MudSkeleton />
-                <MudSkeleton SkeletonType="SkeletonType.Circle" Height="100px" />
-                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="100%" />
-            </MudPaper>
-        }
-    </MudDrawer>
+        </MudDrawer>
+    }
+    @if (_staticAssetsOpen)
+    {
+        <MudDrawer Open="true" Anchor="Anchor.Start" ClipMode="DrawerClipMode.Docked" Variant="@DrawerVariant.Temporary"
+                   Overlay="false"
+                   Class="@(_examplesOpen ? "mud-drawer-two try-drawer" :
+                                            "mud-drawer-one try-drawer")"
+                   Elevation="1">
+            <MudStack Class="pa-3" Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.h6">Static Assets</MudText>
+                <MudIconButton Class="ma-0 pa-0"
+                               Icon="@(_dockStaticAssets ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowDropDown)"
+                               OnClick="@(() => ToggleDock("assets"))" />
+            </MudStack>
+        </MudDrawer>
+    }
     <div class="try-editor">
         <MudOverlay Visible="Loading" Absolute="true" DarkBackground="true">
-            <MudText Typo="Typo.h4" Class="white-text"> @LoaderText</MudText>
+            <MudText Typo="Typo.h4" Class="white-text">@LoaderText</MudText>
+        </MudOverlay>
+        <MudOverlay Visible="@_overlayExamples" Absolute="true" OnClick="@OverlayClicked">
         </MudOverlay>
         <div id="user-code-editor-container">
             <TabManager Tabs="@CodeFileNames" OnTabActivate="@HandleTabActivate" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreate" />

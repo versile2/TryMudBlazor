@@ -15,7 +15,7 @@
         }
 
         private void LoadComponents()
-        {            
+        {
             var componentDirs = Directory.GetDirectories(_basePath);
 
             foreach (var componentDir in componentDirs)
@@ -28,56 +28,103 @@
                     // First create dictionary of example names to their titles from the main page
                     var exampleTitles = new Dictionary<string, string>();
                     var mainPageFile = Directory.GetFiles(componentDir, "*.razor")
-                                              .FirstOrDefault(f => !f.Contains("Page"));
+                                              .FirstOrDefault(f => f.Contains("Page"));
 
                     if (mainPageFile != null)
                     {
                         var pageContent = File.ReadAllText(mainPageFile);
-                        var sectionMatches = Regex.Matches(pageContent, @"<DocsPageSection>.*?</DocsPageSection>", RegexOptions.Singleline);
+                        var sectionMatches = Regex.Matches(pageContent, @"<DocsPageSection\b[^>]*>[\s\S]*?<\/DocsPageSection>", RegexOptions.Singleline);
 
                         foreach (Match sectionMatch in sectionMatches)
                         {
                             var section = sectionMatch.Value;
 
                             // Extract Title
-                            var titleMatch = Regex.Match(section, @"<SectionHeader\s+Title=""([^""]+)""");
+                            var titleMatch = Regex.Match(section, @"<SectionHeader\b[^>]*Title\s*=\s*""([^""]+)""", RegexOptions.Singleline);
                             var title = titleMatch.Success ? titleMatch.Groups[1].Value : string.Empty;
 
-                            // Extract Code example name
-                            var codeMatch = Regex.Match(section, @"Code=""@nameof\(([^)]+)\)""");
-                            if (codeMatch.Success)
+                            // Extract Code example names - handle both single and multiple file cases
+                            var singleCodeMatch = Regex.Match(section, @"Code\s*=\s*""@nameof\(([^)]+)\)""", RegexOptions.Singleline);
+                            if (singleCodeMatch.Success)
                             {
-                                var exampleName = codeMatch.Groups[1].Value;
+                                var exampleName = singleCodeMatch.Groups[1].Value;
                                 if (!string.IsNullOrEmpty(title))
                                 {
                                     exampleTitles[exampleName] = title;
                                 }
                             }
+
+                            // Extract multiple files case
+                            var multiCodeMatch = Regex.Match(section, @"Codes\s*=\s*""@\(new\[\]\s*{([^}]+)}\)""", RegexOptions.Singleline);
+                            if (multiCodeMatch.Success)
+                            {
+                                var codeFilesContent = multiCodeMatch.Groups[1].Value;
+                                var codeFileMatches = Regex.Matches(codeFilesContent, @"new\s+CodeFile\([^,]+,\s*nameof\(([^)]+)\)\)");
+
+                                if (codeFileMatches.Count > 0)
+                                {
+                                    // Use the first file as the main example
+                                    var mainExampleName = codeFileMatches[0].Groups[1].Value;
+                                    if (!string.IsNullOrEmpty(title))
+                                    {
+                                        exampleTitles[mainExampleName] = title;
+                                    }
+
+                                    // Store associated files
+                                    for (int i = 0; i < codeFileMatches.Count; i++)
+                                    {
+                                        var associatedFileName = codeFileMatches[i].Groups[1].Value;
+                                        exampleTitles[$"{mainExampleName}_{associatedFileName}"] = title;
+                                    }
+                                }
+                            }
                         }
                     }
 
-                    // Now process example files and match with titles
-                    var exampleFiles = Directory.GetFiles(examplesDir, "*Example.razor");
-                    foreach (var exampleFile in exampleFiles)
+                    // Process example files and match with titles
+                    var allExampleFiles = Directory.GetFiles(examplesDir, "*Example*.razor");
+                    var mainExampleFiles = allExampleFiles.Where(f => !Path.GetFileName(f).Contains("Example_")).ToList();
+                    var associatedFiles = allExampleFiles.Where(f => Path.GetFileName(f).Contains("Example_")).ToList();
+
+                    foreach (var mainExampleFile in mainExampleFiles)
                     {
-                        var fileName = Path.GetFileNameWithoutExtension(exampleFile);
-                        // Extract short name by removing "Example" suffix
+                        var fileName = Path.GetFileNameWithoutExtension(mainExampleFile);
                         var shortName = fileName.EndsWith("Example")
                             ? fileName.Substring(0, fileName.Length - "Example".Length)
                             : fileName;
-                        // Get content
-                        var exampleContent = File.ReadAllText(exampleFile);
-                        Examples.Add(new ComponentExample
+
+                        var example = new ComponentExample
                         {
                             ComponentName = componentShortName,
                             ExampleFullName = exampleTitles.TryGetValue(fileName, out var title) ? title : componentShortName,
                             ExampleShortName = shortName,
-                            ExampleFileName = fileName,
-                            ExampleContent = exampleContent,
-                        });
+                            AssociatedFiles = new List<ComponentFile> { new ComponentFile { FileName = fileName, ShortName = "Page", Content = CleanNameSpaces(File.ReadAllText(mainExampleFile)) } }
+                        };
+
+                        // Find and add associated files
+                        var relatedFiles = associatedFiles.Where(f => Path.GetFileName(f).StartsWith(fileName + "_"));
+                        foreach (var relatedFile in relatedFiles)
+                        {
+                            var relatedShortName = Path.GetFileNameWithoutExtension(relatedFile);
+                            var relatedFileName = Path.GetFileName(relatedFile);
+
+                            example.AssociatedFiles.Add(new ComponentFile
+                            {
+                                ShortName = relatedShortName,
+                                FileName = relatedFileName,
+                                Content = CleanNameSpaces(File.ReadAllText(relatedFile)),
+                            });
+                        }
+
+                        Examples.Add(example);
                     }
                 }
             }
+        }
+
+        private string CleanNameSpaces(string fileContents)
+        {
+            return Regex.Replace(fileContents, @"^@namespace\s+.*$", string.Empty, RegexOptions.Multiline);
         }
     }
 }
