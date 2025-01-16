@@ -98,7 +98,7 @@
                             ComponentName = componentShortName,
                             ExampleFullName = exampleTitles.TryGetValue(fileName, out var title) ? title : componentShortName,
                             ExampleShortName = shortName,
-                            AssociatedFiles = new List<ComponentFile> { new ComponentFile { FileName = fileName, ShortName = "Page", Content = CleanNameSpaces(File.ReadAllText(mainExampleFile)) } }
+                            AssociatedFiles = new List<ComponentFile> { new ComponentFile { FileName = fileName, ShortName = "Page", Content = CleanInvalidLines(File.ReadAllText(mainExampleFile)) } }
                         };
 
                         // Find and add associated files
@@ -112,7 +112,7 @@
                             {
                                 ShortName = relatedShortName,
                                 FileName = relatedFileName,
-                                Content = CleanNameSpaces(File.ReadAllText(relatedFile)),
+                                Content = CleanInvalidLines(File.ReadAllText(relatedFile)),
                             });
                         }
 
@@ -122,9 +122,12 @@
             }
         }
 
-        private string CleanNameSpaces(string fileContents)
+        private string CleanInvalidLines(string fileContents)
         {
-            return Regex.Replace(fileContents, @"^@namespace\s+.*$", string.Empty, RegexOptions.Multiline);
+            fileContents = Regex.Replace(fileContents, @"^@namespace\s+.*$", string.Empty, RegexOptions.Multiline);
+            fileContents = Regex.Replace(fileContents, @"^@page\s+.*$", string.Empty, RegexOptions.Multiline);
+            fileContents = Regex.Replace(fileContents, @"^@layout\s+.*$", string.Empty, RegexOptions.Multiline);
+            return fileContents;
         }
     }
 }
