@@ -35,19 +35,12 @@
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-33J60J6E14"></script>
-    <script type="text/javascript">
-        window.addEventListener('storage', (e) => {
-            if (e.key == "userPreferences") {
-                const mudblazorTheme = parent.document.getElementById('tryThemeProvider');
-                const iFrameTheme = document.getElementById('tryThemeProvider');
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-                if (mudblazorTheme && iFrameTheme) {
-                    iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
-                } else {
-                    console.error('Could not find one or both of the theme elements.');
-                }
-            }
-        });
+        gtag('config', 'G-33J60J6E14');
     </script>
 </head>
 
@@ -70,9 +63,14 @@
     <script type="text/javascript">
         window.addEventListener('storage', (e) => {
             if (e.key == "userPreferences") {
-                const mudblazorTheme = parent.document.getElementsByTagName('style')[4];
-                const iFrameTheme = document.getElementsByTagName('style')[3];
-                iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+                const mudblazorTheme = parent.document.getElementById('tryThemeProvider');
+                const iFrameTheme = document.getElementById('tryThemeProvider');
+
+                if (mudblazorTheme && iFrameTheme) {
+                    iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+                } else {
+                    console.error('Could not find one or both of the theme elements.');
+                }
             }
         });
     </script>
