@@ -15,10 +15,7 @@ namespace TryMudBlazor.Client.Components
         public HttpClient httpClient { get; set; }
 
         [Inject]
-        protected IJsApiService JsApiService { get; set; }
-
-        [Inject]
-        public IJSInProcessRuntime JsRuntime { get; set; }        
+        public IJSRuntime JsRuntime { get; set; }        
 
         [Parameter]
         public bool Visible { get; set; }
@@ -34,16 +31,15 @@ namespace TryMudBlazor.Client.Components
 
         private bool Loading { get; set; }
 
-        private string AddLink { get; set; }
-
-        private async Task CopyLinkToClipboard()
-        {
-            await JsApiService.CopyToClipboardAsync(AddLink);
-        }
+        private string AddLink { get; set; } = string.Empty;
 
         private async Task PasteLinkFromClipboard()
         {
-            await Task.CompletedTask;
+            string text = await JsRuntime.InvokeAsync<string>("copyFromClipboard");
+            if (text != null)
+            {
+                AddLink = text;
+            }
         }
 
         private async Task VerifyLink()
@@ -58,17 +54,26 @@ namespace TryMudBlazor.Client.Components
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Link exists.");
+                    var name = AddLink.Substring(AddLink.LastIndexOf('/') + 1);
+                    var link = new StaticAsset { Location=AddLink, IsIncluded=true, Name=name  };
+                    if (AddLinks.Where(x => x.Name == name).ToList().Any())
+                    {
+                        Snackbar.Add("Can't have a link with the same name as another link.", Severity.Error);
+                    }
+                    else
+                    {
+                        AddLinks.Add(link);
+                    }                    
                 }
                 else
                 {
-                    Console.WriteLine($"Link does not exist or error occurred. Status code: {response.StatusCode}");
+                    Snackbar.Add($"Link does not exist or error occurred. Status code: {response.StatusCode}", Severity.Error);
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
                 // Handle network errors or other exceptions
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Snackbar.Add("Unable to verify link, Link not added.", Severity.Error);
             }
             finally
             {

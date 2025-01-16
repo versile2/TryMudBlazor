@@ -5,13 +5,12 @@
             <div>
                 <MudStack Spacing="1" Row AlignItems="AlignItems.Center">
                     <MudTextField @bind-Value="@AddLink"
-                                  Variant="Variant.Outlined"
-                                  Margin="Margin.Dense"
-                                  Class="try-save-snippet-input"
-                                  AdornmentIcon="@Icons.Material.Filled.ContentPaste"
-                                  Adornment="@Adornment.End"
-                                  OnAdornmentClick="@PasteLinkFromClipboard" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@VerifyLink" Class="pa-2 mr-n3" Size="Size.Small" />
+                    Variant="Variant.Outlined"
+                    Margin="Margin.Dense"
+                    Class="try-save-snippet-input"
+                    Clearable />
+                    <MudIconButton Icon="@Icons.Material.Filled.ContentPaste" OnClick="@PasteLinkFromClipboard" Class="pa-2 mr-n3" Size="Size.Small" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Disabled="@(!(AddLink.Length > 8))" OnClick="@VerifyLink" Class="pa-2 mr-n3" Size="Size.Small" />
                 </MudStack>
             </div>
 
@@ -32,6 +31,14 @@
                                         <MudSwitch Color="Color.Primary" @bind-Value="@item.IsIncluded" />
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLink(item))" />
                                     </MudStack>
+                                </MudStack>
+                            </MudListItem>
+                        }
+                        @if (AddLinks.Count == 0)
+                        {
+                            <MudListItem>
+                                <MudStack Row Justify="Justify.Center">
+                                    <MudText Typo="Typo.body1" Color="Color.Warning">No internet links.</MudText>
                                 </MudStack>
                             </MudListItem>
                         }
