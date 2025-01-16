@@ -11,16 +11,10 @@
         z-index: calc(var(--mud-zindex-drawer) + 2);
     }
 
-    .mud-drawer-two {
-        left: calc(var(--mud-drawer-width-mini-left) + var(--mud-drawer-width-left) + 4px) !important;
-    }
-
     .mud-drawer--closed {
         display: none;
         visibility: collapse;
     }
-
-
 
     .force-mini {
         width: var(--mud-drawer-width-mini-left) !important;
@@ -78,7 +72,7 @@
         border-color: currentColor;
     }
 </style>
-<div class="try-layout" style="@layoutStyle()">
+<div class="try-layout" style="@LayoutStyle()">
     <MudDrawer Open="true" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer force-mini">
         <MudIconButton title="Run (Ctrl + S)" OnClick="@CompileAsync" Disabled="@Loading" Icon="@Icons.Material.Rounded.PlayArrow" Color="@(LayoutService.IsDarkMode ? Color.Success : Color.Inherit)" />
         <MudTooltip Text="Save or Share" Delay="800" Arrow="true" Placement="Placement.Right" Color="Color.Dark">
@@ -86,9 +80,10 @@
             <MudIconButton OnClick="ShowSaveSnippetPopup" Icon="@Icons.Material.Outlined.Save" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
         </MudTooltip>
         <MudTooltip Text="Static Assets" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
-            <MudIconButton OnClick="@ToggleStaticAssets" Icon="@Icons.Material.Filled.DocumentScanner" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
+            <StaticAssetsPopup @bind-Visible="StaticAssetsPopupVisible" @bind-AddLinks="@cdnORjsFiles" />
+            <MudIconButton OnClick="ShowStaticAssetsPopup" Icon="@Icons.Material.Filled.DocumentScanner" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
         </MudTooltip>
-        <MudTooltip Text="Doc Examples" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
+        <MudTooltip Text="Doc Examples" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">            
             <MudIconButton OnClick="@ToggleExamples" Icon="@Icons.Material.Filled.SettingsInputComponent" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
         </MudTooltip>
         <MudTooltip Text="@(LayoutService.IsDarkMode ? "Switch to Light Theme" : "Switch to Dark Theme")" Delay="800" Arrow="true" Placement="Placement.Right" Color="Color.Dark">
@@ -110,7 +105,6 @@
             <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">R</MudAvatar>
         </MudStack>
     </MudDrawer>
-    <MudDrawerContainer>
         @if (_examplesOpen)
         {
             <MudDrawer Open="true" Anchor="Anchor.Start" ClipMode="DrawerClipMode.Docked" Variant="@DrawerVariant.Temporary"
@@ -121,7 +115,7 @@
                     <MudText Typo="Typo.h6">Doc Examples</MudText>
                     <MudIconButton Class="ma-0 pa-0"
                                    Icon="@(_dockExamples ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowDropDown)"
-                                   OnClick="@(() => ToggleDock("examples"))" />
+                                   OnClick="@(() => ToggleDock("examples"))" />                
                 </MudStack>
                 @if (_compList.Any())
                 {
@@ -135,6 +129,7 @@
                                       Class="ml-3"
                                       Style="width: 102%;"
                                       Immediate Clearable />
+                        <ShowConfirmExamplePopup @bind-Visible="ShowConfirmExamplePopupVisible" ReturnResult="@ConfirmExampleChanged" />
                     </div>
                     @foreach (var main in _compList.Where(x => x.ComponentName.Contains(_compSearch, StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.ComponentName).Select(x => x.ComponentName).Distinct().ToList())
                     {
@@ -145,7 +140,7 @@
                                      Class="mx-2 pa-1 try-component-menu">
                                 @foreach (var comp in _compList.Where(x => x.ComponentName == main).ToList())
                                 {
-                                    <MudMenuItem Label="@comp.ExampleFullName" OnClick="@(() => CopyExample(comp))" />
+                                    <MudMenuItem Label="@comp.ExampleFullName" OnClick="@(() => ConfirmExample(comp))" />
                                 }
                             </MudMenu>
                         </div>
@@ -161,21 +156,6 @@
                 }
             </MudDrawer>
         }
-        @if (_staticAssetsOpen)
-        {
-            <MudDrawer Open="true" Anchor="Anchor.Start" ClipMode="DrawerClipMode.Docked" Variant="@DrawerVariant.Temporary"
-                       Overlay="false" Fixed
-                       Class="@assetsClass"
-                       Elevation="1">
-                <MudStack Class="pa-3" Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                    <MudText Typo="Typo.h6">Static Assets</MudText>
-                    <MudIconButton Class="ma-0 pa-0"
-                                   Icon="@(_dockStaticAssets ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowDropDown)"
-                                   OnClick="@(() => ToggleDock("assets"))" />
-                </MudStack>
-            </MudDrawer>
-        }
-    </MudDrawerContainer>
     <div class="try-editor" style="margin-left: var(--mud-drawer-width-mini-left) !important">
         <MudOverlay Visible="Loading" Absolute="true" DarkBackground="true">
             <MudText Typo="Typo.h4" Class="white-text">@LoaderText</MudText>
