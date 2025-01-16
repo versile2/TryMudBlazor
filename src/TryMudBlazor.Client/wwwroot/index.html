@@ -35,12 +35,19 @@
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-33J60J6E14"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+    <script type="text/javascript">
+        window.addEventListener('storage', (e) => {
+            if (e.key == "userPreferences") {
+                const mudblazorTheme = parent.document.getElementById('tryThemeProvider');
+                const iFrameTheme = document.getElementById('tryThemeProvider');
 
-        gtag('config', 'G-33J60J6E14');
+                if (mudblazorTheme && iFrameTheme) {
+                    iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+                } else {
+                    console.error('Could not find one or both of the theme elements.');
+                }
+            }
+        });
     </script>
 </head>
 
