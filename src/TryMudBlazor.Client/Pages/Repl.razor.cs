@@ -33,6 +33,29 @@
         private bool _dockStaticAssets = false;
         private string[] cdnORjsFiles = ["https://code.jquery.com/jquery-3.7.1.slim.min.js", "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"];
 
+        private string assetsClass => _examplesOpen ? "mud-drawer-two try-drawer" :
+                                                       "mud-drawer-one try-drawer";
+        private string layoutStyle()
+        {
+            var num = 0;
+            var layStyle = "padding-left: ";
+            if (_dockExamples) num++;
+            if (_dockStaticAssets) num++;
+            if (num == 0)
+            {
+                layStyle = string.Empty;
+            }
+            else if (num == 1)
+            {
+                layStyle += "calc(var(--mud-drawer-width, var(--mud-drawer-width-left)) + 2px);";
+            }
+            else if (num == 2)
+            {
+                layStyle += "calc(var(--mud-drawer-width-left) + var(--mud-drawer-width-left) + 4px)";
+            }
+            return layStyle;
+        }
+
         [Inject]
         public ISnackbar Snackbar { get; set; }
 
@@ -104,7 +127,9 @@
         private void OverlayClicked()
         {
             _overlayExamples = false;
-            UpdateOverlay();
+            if (!_dockExamples) _examplesOpen = false;
+            if (!_dockStaticAssets) _staticAssetsOpen = false;
+            StateHasChanged();
         }
 
         private void UpdateOverlay()
