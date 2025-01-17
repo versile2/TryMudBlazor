@@ -64,12 +64,24 @@
         window.addEventListener('storage', (e) => {
             if (e.key == "userPreferences") {
                 const mudblazorTheme = parent.document.getElementById('tryThemeProvider');
-                const iFrameTheme = document.getElementById('tryThemeProvider');
+                if (mudblazorTheme) {
+                    // Find the iframe
+                    const userPageIframe = parent.document.getElementById('user-page-window');
 
-                if (mudblazorTheme && iFrameTheme) {
-                    iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+                    if (userPageIframe && userPageIframe.contentDocument) {
+                        const iframeDoc = userPageIframe.contentDocument;
+                        const iFrameTheme = iframeDoc.getElementById('tryThemeProvider') || iframeDoc.getElementsByTagName('style')[2];
+
+                        if (iFrameTheme) {
+                            iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+                        } else {
+                            console.error('Could not find or fallback to the theme element in the iframe.');
+                        }
+                    } else {
+                        console.error('Could not find the iframe or access its content document.');
+                    }
                 } else {
-                    console.error('Could not find one or both of the theme elements.');
+                    console.error('Could not find the parent theme element.');
                 }
             }
         });
