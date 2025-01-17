@@ -52,7 +52,7 @@ public class Program
         app.UseStaticFiles();
 
         app.MapControllers();
-        app.MapFallbackToFile("index.html");
+        app.MapFallbackToFile("index.html").CacheOutput(policy => policy.VaryByValue("one","two"));
 
         app.Run();
     }
