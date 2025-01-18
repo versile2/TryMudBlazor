@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Try.Core", "Try.Core\Try.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Try.Tests", "Try.Tests\Try.Tests.csproj", "{CAB66C20-A3C2-408E-9DAB-CA7EFEC2227F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Examples.Data", "MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{0353B924-2BF0-4BB3-86B1-04C95BE10CF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "..\MudBlazor\src\MudBlazor.Examples.Data", "MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{0353B924-2BF0-4BB3-86B1-04C95BE10CF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05C7416B-1168-47EF-A544-9FF8D88AE430}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,15 +21,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nginx.conf = nginx.conf
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{0A6E7394-6C3A-4EA7-B946-93050F9A169D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor", "..\MudBlazor\src\MudBlazor\MudBlazor.csproj", "{0A6E7394-6C3A-4EA7-B946-93050F9A169D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers", "MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{1F72E936-06A9-4FBB-847B-F5B232D167EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers", "..\MudBlazor\src\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{1F72E936-06A9-4FBB-847B-F5B232D167EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.SourceGenerator", "MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj", "{E77F7EB3-60B9-4212-A926-923DC295B420}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.SourceGenerator", "..\MudBlazor\src\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj", "{E77F7EB3-60B9-4212-A926-923DC295B420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs", "MudBlazor.Docs\MudBlazor.Docs.csproj", "{CAA8D3C9-B531-4C9D-8C88-B59CF4F26A2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs", "..\MudBlazor\src\MudBlazor.Docs\MudBlazor.Docs.csproj", "{CAA8D3C9-B531-4C9D-8C88-B59CF4F26A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs.Compiler", "MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj", "{A83222CB-6629-4208-A885-C1D237ABFAA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs.Compiler", "..\MudBlazor\src\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj", "{A83222CB-6629-4208-A885-C1D237ABFAA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
