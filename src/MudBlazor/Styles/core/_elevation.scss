@@ -1,5 +1,0 @@
-﻿@for $i from 0 through 25 {
-  .mud-elevation-#{$i} {
-    box-shadow: var(--mud-elevation-#{$i});
-  }
-}
