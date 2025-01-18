@@ -9,5 +9,7 @@
         public string Name { get; set; }
 
         public bool IsIncluded { get; set; }
+
+        public FileType FileType { get; set; }
     }
 }

@@ -17,6 +17,8 @@
         {
             CodeFile.RazorFileExtension,
             CodeFile.CsharpFileExtension,
+            CodeFile.JsFileExtension,
+            CodeFile.CssFileExtension,
         };
 
         public static string NormalizeCodeFilePath(string path, out string error)

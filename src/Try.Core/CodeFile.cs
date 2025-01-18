@@ -7,6 +7,8 @@
     {
         public const string RazorFileExtension = ".razor";
         public const string CsharpFileExtension = ".cs";
+        public const string CssFileExtension = ".css";
+        public const string JsFileExtension = ".js";
 
         private CodeFileType? type;
 

@@ -204,7 +204,7 @@
                         Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                     };
                 }
-                else
+                else if (codeFile.Type == CodeFileType.CSharp)
                 {
                     declarations[index] = new CompileToCSharpResult
                     {

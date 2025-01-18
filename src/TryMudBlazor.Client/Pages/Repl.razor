@@ -18,6 +18,7 @@
 
     .force-mini {
         width: var(--mud-drawer-width-mini-left) !important;
+        overflow: hidden;
     }
 
     .try-component-menu {
@@ -71,17 +72,24 @@
     .try-component-boxes .mud-input.mud-input-filled.mud-input-underline:after {
         border-color: currentColor;
     }
+
+    .static-asset-badge>span.mud-badge-wrapper {
+        top: 14px;
+        left: -14px;
+    }
 </style>
 <div class="try-layout" style="@LayoutStyle()">
-    <MudDrawer Open="true" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer force-mini">
+    <MudDrawer Open="true" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" Class="try-drawer mud-drawer--open force-mini">
         <MudIconButton title="Run (Ctrl + S)" OnClick="@CompileAsync" Disabled="@Loading" Icon="@Icons.Material.Rounded.PlayArrow" Color="@(LayoutService.IsDarkMode ? Color.Success : Color.Inherit)" />
         <MudTooltip Text="Save or Share" Delay="800" Arrow="true" Placement="Placement.Right" Color="Color.Dark">
             <SaveSnippetPopup @bind-Visible="SaveSnippetPopupVisible" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent" />
             <MudIconButton OnClick="ShowSaveSnippetPopup" Icon="@Icons.Material.Outlined.Save" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
         </MudTooltip>
         <MudTooltip Text="Static Assets" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
-            <StaticAssetsPopup @bind-Visible="StaticAssetsPopupVisible" @bind-AddLinks="@cdnORjsFiles" />
-            <MudIconButton OnClick="ShowStaticAssetsPopup" Icon="@Icons.Material.Filled.DocumentScanner" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
+            <StaticAssetsPopup @bind-Visible="StaticAssetsPopupVisible" @bind-AddLinks="@cssORjsFiles" />
+            <MudBadge Content="@cssORjsFiles.Count" Overlap Class="static-asset-badge">
+                <MudIconButton OnClick="ShowStaticAssetsPopup" Icon="@Icons.Material.Filled.DocumentScanner" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
+            </MudBadge>
         </MudTooltip>
         <MudTooltip Text="Doc Examples" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">            
             <MudIconButton OnClick="@ToggleExamples" Icon="@Icons.Material.Filled.SettingsInputComponent" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
@@ -186,6 +194,18 @@
         <MudLink Typo="Typo.body2" Class="ml-10 version-info" Color="Color.Inherit" Href="https://dotnet.microsoft.com/download" Target="_blank">.net @Environment.Version.ToString()</MudLink>
         <MudLink Typo="Typo.body2" Class="ml-5 version-info" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor/releases" Target="_blank">mudblazor @Version</MudLink>
     </MudAppBar>
+</div>
+<div class="scriptAdds" style="display:none;">
+    @foreach (var asset in cssORjsFiles.Where(x => x.IsIncluded && x.FileType == Models.FileType.JS))
+    {
+        <span title="@asset.Location">@asset.Name</span>
+    }
+</div>
+<div class="styleAdds" style="display:none;">
+    @foreach (var asset in cssORjsFiles.Where(x => x.FileType == Models.FileType.CSS))
+    {
+        <span title="@asset.Location">@asset.Name</span>
+    }
 </div>
 @code {
     public Color GetBottomAppBarColor()
