@@ -1,0 +1,76 @@
+﻿@page "/features/converters"
+
+<DocsPage>
+    <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader>
+                 <Description>
+                    When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T, then a <CodeInline>Converter</CodeInline>
+                    converts that value to <CodeInline>string</CodeInline> for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
+                    MudBlazor's <CodeInline>DefaultConverter<Tag>T</Tag></CodeInline> is pretty capable as you can see below but sometimes
+                    you'll want to use your own conversion functions. This page is all about that.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DefaultConverter<T>">
+                <Description>
+                    The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
+                    Edit the textfields below to see how the default converter handles different values depending on the type.
+                </Description>
+            </SectionHeader>
+            <DefaultConverterTable/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DateConverter">
+                <Description>
+                    <MudText>
+                        By default, the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that, you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
+                        by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
+                    </MudText>
+                    <MudText Class="mt-4">
+                        If you want to configure the date format of a DateTime value, you can set the <CodeInline>Format</CodeInline> parameter of <CodeInline Tag="true">MudTextField</CodeInline>.
+                    </MudText>
+                    <MudText>
+                        Let's format the same date in different ways:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(TurkeyTestExample)" ShowCode="false">
+                <TurkeyTestExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Binding Converters">
+                <Description>
+                    If you need some really special binding conversion, it is very easy to plug in your own converter.
+                    Just create a <CodeInline>Converter<Tag>T</Tag></CodeInline> and set the <CodeInline>SetFunc</CodeInline> and the <CodeInline>GetFunc</CodeInline>.
+                    <MudText>
+                        Type in the textfield to set the switch or flip the switch to set the text:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(SpecialConverterExample)" ShowCode="false">
+                <SpecialConverterExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Default Custom Binding Converters">
+                <Description>
+                    If you need to setup global converter for a certain class or struct you can do it as well through static delegate:
+                    Just set a <CodeInline>Converter<Tag>T</Tag>.GlobalGetFunc</CodeInline> and
+                    <CodeInline>Converter<Tag>T</Tag>.GlobalSetFunc</CodeInline>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(PointConverterExample)" ShowCode="false">
+                <PointConverterExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
