@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Examples.Data;
+using Try.Core;
+using TryMudBlazor.Client;
 using TryMudBlazor.Server.Data;
 using TryMudBlazor.Server.Services;
 
@@ -52,7 +54,26 @@ public class Program
         app.UseStaticFiles();
 
         app.MapControllers();
-        app.MapFallbackToFile("index.html").CacheOutput(policy => policy.VaryByValue("one","two"));
+
+        // Cache busting
+        var cacheBusting = DateTimeVersion.Cache;
+        // Custom middleware to replace #{CACHE_TOKEN}#
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path == "/index.html" || context.Request.Path == "/") // Check if the request is for index.html or root
+            {
+                string fileContent = await File.ReadAllTextAsync(Path.Combine(Directory.GetCurrentDirectory(), "..", "TryMudBlazor.Client", "wwwroot", "index.html"));
+                string modifiedContent = fileContent.Replace("#{CACHE_TOKEN}#", cacheBusting);
+
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync(modifiedContent);
+            }
+            else
+            {
+                await next();
+            }
+        });        
+        app.MapFallbackToFile("index.html").CacheOutput(policy => policy.SetVaryByQuery("cachebust", cacheBusting));
 
         app.Run();
     }
