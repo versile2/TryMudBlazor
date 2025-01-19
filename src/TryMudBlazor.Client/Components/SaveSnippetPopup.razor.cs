@@ -3,12 +3,14 @@ namespace TryMudBlazor.Client.Components
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
     using MudBlazor;
     using Try.Core;
     using TryMudBlazor.Client.Models;
+    using TryMudBlazor.Client.Pages;
     using TryMudBlazor.Client.Services;
 
     public partial class SaveSnippetPopup
@@ -35,7 +37,10 @@ namespace TryMudBlazor.Client.Components
         public EventCallback<bool> VisibleChanged { get; set; }
 
         [Parameter]
-        public IEnumerable<CodeFile> CodeFiles { get; set; } = Enumerable.Empty<CodeFile>();
+        public List<CodeFile> CodeFiles { get; set; } = new();
+
+        [Parameter]
+        public IEnumerable<StaticAsset> StaticAssets { get; set; }
 
         [Parameter]
         public Action UpdateActiveCodeFileContentAction { get; set; }
@@ -55,6 +60,16 @@ namespace TryMudBlazor.Client.Components
             try
             {
                 this.UpdateActiveCodeFileContentAction?.Invoke();
+                CodeFile codeFile;
+                if (this.StaticAssets.Any())
+                {
+                    codeFile = new CodeFile
+                    {
+                        Path = "cssOrJs.css",
+                        Content = JsonSerializer.Serialize(this.StaticAssets),
+                    };
+                    this.CodeFiles.Add(codeFile);
+                }
 
                 var snippetId = await this.SnippetsService.SaveSnippetAsync(this.CodeFiles);
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"snippet/{snippetId}" };

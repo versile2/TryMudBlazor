@@ -25,6 +25,19 @@
 
         public const string DefaultRazorFileContentFormat = "<h1>{0}</h1>";
 
+        public static readonly string DefaultJavaScriptFileContentFormat =
+            @$"function {{0}}() {{{{
+    // Add your code here
+}}}}
+";
+
+        public static readonly string DefaultCssFileContentFormat =
+            @$".{{0}} {{{{
+    /* Add your styles here */
+}}}}
+";
+
+
         public static readonly string DefaultCSharpFileContentFormat =
             @$"namespace {CompilationService.DefaultRootNamespace}
 {{{{

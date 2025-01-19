@@ -46,6 +46,8 @@ namespace TryMudBlazor.Client
             var jsRuntime = GetJsRuntime();
             try
             {
+                await jsRuntime.InvokeVoidAsync("Try.StaticAssets.loadStaticAssets");
+
                 ExecuteUserDefinedConfiguration(builder);
             }
             catch (Exception exception)

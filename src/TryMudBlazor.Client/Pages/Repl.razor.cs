@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
     using Microsoft.CodeAnalysis;
@@ -30,11 +31,11 @@
         private ComponentExample _selectedExample = null;
         private string _compSearch = string.Empty;
         private bool _overlayExamples = false;
-        private List<StaticAsset> cssORjsFiles = 
-            [
-            new StaticAsset { Location="https://code.jquery.com/jquery-3.7.1.slim.min.js", IsIncluded=true, Name="jquery-3.7.1.slim.min.js", FileType = FileType.JS },
-            new StaticAsset { Location="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", IsIncluded=true, Name="font-awesome.min.css", FileType = FileType.CSS }
-            ];
+        private List<StaticAsset> cssORjsFiles = [];
+            //[
+            //new StaticAsset { Location="https://code.jquery.com/jquery-3.7.1.slim.min.js", IsIncluded=true, Name="jquery-3.7.1.slim.min.js", FileType = FileType.JS },
+            //new StaticAsset { Location="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", IsIncluded=true, Name="font-awesome.min.css", FileType = FileType.CSS }
+            //];
 
         private string LayoutStyle()
         {
@@ -137,7 +138,7 @@
         private async Task ClearCache()
         {
             await JsRuntime.InvokeVoidAsync("Try.clearCache");
-            NavigationManager.NavigateTo(NavigationManager.BaseUri);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri, true);
         }
 
         private string Version
@@ -171,14 +172,28 @@
             {
                 try
                 {
-                    this.CodeFiles = (await this.SnippetsService.GetSnippetContentAsync(this.SnippetId)).ToDictionary(f => f.Path, f => f);
-                    if (!this.CodeFiles.Any())
+                    Dictionary<string, CodeFile> codeFiles;
+                    codeFiles = (await this.SnippetsService.GetSnippetContentAsync(this.SnippetId)).ToDictionary(f => f.Path, f => f);
+                    if (!codeFiles.Any())
                     {
                         this.errorMessage = "No files in snippet.";
                     }
                     else
                     {
-                        this.activeCodeFile = this.CodeFiles.First().Value;
+                        var staticAssetsKey = "cssOrJs.css";
+                        if (codeFiles.ContainsKey(staticAssetsKey))
+                        {
+                            // Retrieve the JSON string
+                            string json = codeFiles[staticAssetsKey].Content;
+
+                            // Deserialize the JSON string to the appropriate type
+                            var deserializedCssOrJsFiles = JsonSerializer.Deserialize<List<StaticAsset>>(json); // Adjust type as needed
+
+                            // Assign or use the deserialized object
+                            this.cssORjsFiles = deserializedCssOrJsFiles ?? new List<StaticAsset>();
+                        }
+                        this.CodeFiles = codeFiles.Where(x => x.Key != staticAssetsKey).ToDictionary();
+                        this.activeCodeFile = this.CodeFiles[CoreConstants.MainComponentFilePath];
                     }
                 }
                 catch (ArgumentException)
@@ -301,26 +316,40 @@
                 }
 
                 compilationResult = await this.CompilationService.CompileToAssemblyAsync(
-                    this.CodeFiles.Values,
+                    this.CodeFiles.Values.Where(x => x.Type == CodeFileType.CSharp || x.Type == CodeFileType.Razor).ToList(),
                     this.UpdateLoaderTextAsync);
 
-                //// clear user scripts and styles
-                //await JsRuntime.InvokeVoidAsync("removeUserScriptsAndStyles");
+                // clear user scripts and styles
+                await JsRuntime.InvokeVoidAsync("Try.StaticAssets.createStaticAssets");
 
-                //// add cdn style scripts and styles
-                //await JsRuntime.InvokeVoidAsync("insertAssetsIntoIframe");
+                // add cdn style scripts and styles
+                foreach (StaticAsset asset in this.cssORjsFiles)
+                {
+                    var javascriptFunction = "Try.StaticAssets.";
+                    if (asset.FileType == FileType.JS)
+                    {
+                        javascriptFunction += "saveScriptLink";
+                    }
+                    else if (asset.FileType == FileType.CSS)
+                    {
+                        javascriptFunction += "saveCssLink";
+                    }
+                    await JsRuntime.InvokeVoidAsync(javascriptFunction, asset.Location);
+                }                
 
-                //// set js scripts
-                //foreach (CodeFile f  in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Js))
-                //{
-                //    await JsRuntime.InvokeVoidAsync("insertJsContentIntoIframe", f.Content);
-                //}
+                // set js scripts
+                foreach (CodeFile f in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Js))
+                {
+                    await JsRuntime.InvokeVoidAsync("Try.StaticAssets.saveInLineScript", f.Content);
+                }
 
-                //// set css scripts
-                //foreach (CodeFile f in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Css))
-                //{
-                //    await JsRuntime.InvokeVoidAsync("insertCssContentIntoIframe", f.Content);
-                //}
+                // set css scripts
+                foreach (CodeFile f in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Css))
+                {
+                    await JsRuntime.InvokeVoidAsync("Try.StaticAssets.saveInlineCss", f.Content);
+                }
+
+                await JsRuntime.InvokeVoidAsync("Try.StaticAssets.saveStaticAssets");
 
                 this.Diagnostics = compilationResult.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
                 this.AreDiagnosticsShown = true;
@@ -394,10 +423,15 @@
 
             var newCodeFile = new CodeFile { Path = name };
 
-            newCodeFile.Content = newCodeFile.Type == CodeFileType.CSharp
-                ? string.Format(CoreConstants.DefaultCSharpFileContentFormat, nameWithoutExtension)
-                : string.Format(CoreConstants.DefaultRazorFileContentFormat, nameWithoutExtension);
-
+            newCodeFile.Content = newCodeFile.Type switch
+            {
+                CodeFileType.CSharp => string.Format(CoreConstants.DefaultCSharpFileContentFormat, nameWithoutExtension),
+                CodeFileType.Razor => string.Format(CoreConstants.DefaultRazorFileContentFormat, nameWithoutExtension),
+                CodeFileType.Js => string.Format(CoreConstants.DefaultJavaScriptFileContentFormat, nameWithoutExtension),
+                CodeFileType.Css => string.Format(CoreConstants.DefaultCssFileContentFormat, nameWithoutExtension),
+                // Add more cases as needed
+                _ => throw new NotSupportedException($"Unsupported file type: {newCodeFile.Type}"),
+            };
             this.CodeFiles.TryAdd(name, newCodeFile);
 
             this.JsRuntime.InvokeVoid(Try.Editor.SetLangugage, newCodeFile.Type == CodeFileType.CSharp ? "csharp" : "razor");

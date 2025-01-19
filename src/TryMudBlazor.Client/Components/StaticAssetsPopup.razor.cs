@@ -62,7 +62,21 @@ namespace TryMudBlazor.Client.Components
                     }
                     else
                     {
+                        if (link.Name.EndsWith(".js"))
+                        {
+                            link.FileType = FileType.JS;
+                        } 
+                        else if (link.Name.EndsWith(".css"))
+                        {
+                            link.FileType = FileType.CSS;
+                        }
+                        else
+                        {
+                            Snackbar.Add("Link must end in .js or .css", Severity.Warning);
+                            return;
+                        }
                         AddLinks.Add(link);
+                        AddLink = string.Empty;
                     }                    
                 }
                 else

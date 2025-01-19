@@ -84,15 +84,11 @@
         <MudTooltip Text="Save or Share" Delay="800" Arrow="true" Placement="Placement.Right" Color="Color.Dark">
             @if (!_examplesOpen)
             {
-                <SaveSnippetPopup @bind-Visible="SaveSnippetPopupVisible" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent" />
+                @PopupFragment
             }
             <MudIconButton OnClick="ShowSaveSnippetPopup" Icon="@Icons.Material.Outlined.Save" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
         </MudTooltip>
         <MudTooltip Text="Static Assets" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
-            @if (!_examplesOpen)
-            {
-                <StaticAssetsPopup @bind-Visible="StaticAssetsPopupVisible" @bind-AddLinks="@cssORjsFiles" />
-            }
             <MudBadge Content="@cssORjsFiles.Count" Overlap Class="static-asset-badge">
                 <MudIconButton OnClick="ShowStaticAssetsPopup" Icon="@Icons.Material.Filled.DocumentScanner" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
             </MudBadge>
@@ -134,9 +130,7 @@
                                Icon="@(_dockExamples ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowDropDown)"
                                OnClick="@(() => ToggleDock("examples"))" />
             </MudStack>
-            <SaveSnippetPopup @bind-Visible="SaveSnippetPopupVisible" CodeFiles="@CodeFiles.Values" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent" />
-            <StaticAssetsPopup @bind-Visible="StaticAssetsPopupVisible" @bind-AddLinks="@cssORjsFiles" />
-            <ShowConfirmExamplePopup @bind-Visible="ShowConfirmExamplePopupVisible" ReturnResult="@ConfirmExampleChanged" />
+            @PopupFragment
             @if (_compList.Any())
             {
                 <div class="try-component-boxes">
@@ -208,19 +202,15 @@
         <MudLink Typo="Typo.body2" Class="ml-5 version-info" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor/releases" Target="_blank">mudblazor @Version</MudLink>
     </MudAppBar>
 </div>
-<div class="scriptAdds" style="display:none;">
-    @foreach (var asset in cssORjsFiles.Where(x => x.IsIncluded && x.FileType == Models.FileType.JS))
-    {
-        <span title="@asset.Location">@asset.Name</span>
-    }
-</div>
-<div class="styleAdds" style="display:none;">
-    @foreach (var asset in cssORjsFiles.Where(x => x.FileType == Models.FileType.CSS))
-    {
-        <span title="@asset.Location">@asset.Name</span>
-    }
-</div>
 @code {
+    public RenderFragment PopupFragment => @<div>
+        <SaveSnippetPopup @bind-Visible="SaveSnippetPopupVisible" StaticAssets="this.cssORjsFiles"
+                          CodeFiles="@(CodeFiles.Values.ToList())" UpdateActiveCodeFileContentAction="UpdateActiveCodeFileContent" />
+        <StaticAssetsPopup @bind-Visible="StaticAssetsPopupVisible" @bind-AddLinks="@cssORjsFiles" />
+        <ShowConfirmExamplePopup @bind-Visible="ShowConfirmExamplePopupVisible" ReturnResult="@ConfirmExampleChanged" />
+    </div>;
+
+
     public Color GetBottomAppBarColor()
     {
         if (ErrorsCount != 0)

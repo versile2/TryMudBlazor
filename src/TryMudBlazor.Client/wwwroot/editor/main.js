@@ -3,6 +3,7 @@ require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
 let _dotNetInstance;
 
 const throttleLastTimeFuncNameMappings = {};
+const CACHE_NAME = 'dotnet-resources-/';
 
 function registerLangugageProvider(language) {
     monaco.languages.registerCompletionItemProvider(language, {
@@ -14,17 +15,16 @@ function registerLangugageProvider(language) {
                 endColumn: position.column,
             });
 
-            if(language == 'razor')
-            {
+            if (language == 'razor') {
                 if ((textUntilPosition.match(/{/g) || []).length !== (textUntilPosition.match(/}/g) || []).length) {
                     var data = await fetch("editor/snippets/csharp.json").then((response) => response.json());
                 } else {
                     var data = await fetch("editor/snippets/mudblazor.json").then((response) => response.json());
                 }
-            }else {
+            } else {
                 var data = await fetch("editor/snippets/csharp.json").then((response) => response.json());
             }
-            
+
             var word = model.getWordUntilPosition(position);
             var range = {
                 startLineNumber: position.lineNumber,
@@ -32,12 +32,12 @@ function registerLangugageProvider(language) {
                 startColumn: word.startColumn,
                 endColumn: word.endColumn,
             };
-            
+
             var response = Object.keys(data).map(key => {
                 return {
                     label: data[key].prefix,
-                    detail : data[key].description,
-                    documentation : data[key].body.join('\n'),
+                    detail: data[key].description,
+                    documentation: data[key].body.join('\n'),
                     insertText: data[key].body.join('\n'),
                     kind: monaco.languages.CompletionItemKind.Snippet,
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
@@ -81,7 +81,7 @@ window.Try = {
         window.addEventListener('keydown', onKeyDown);
     },
     changeDisplayUrl: function (url) {
-        if (!url) {return; }
+        if (!url) { return; }
         window.history.pushState(null, null, url);
     },
     reloadIframe: function (id, newSrc) {
@@ -100,7 +100,7 @@ window.Try = {
         }
     },
     clearCache: async function () {
-        const cacheName = 'dotnet-resources-/';
+        const cacheName = CACHE_NAME;
         try {
             const cache = await caches.open(cacheName);
             const keys = await cache.keys();
@@ -118,6 +118,156 @@ window.Try = {
         window.removeEventListener('keydown', onKeyDown);
     }
 }
+
+window.Try.StaticAssets = window.Try.StaticAssets || (function () {
+    const CACHE_NAME = 'CACHE_NAME'; // Replace with your actual cache name
+    const STATIC_ASSETS_CACHE_NAME = '__static-assets.json';
+
+    let fileContents = {
+        scriptLinks: [],
+        cssLinks: [],
+        inlineScripts: [],
+        inlineCss: []
+    };
+
+    async function loadFromCache(clear) {
+        if ('caches' in window) {
+            const cache = await caches.open(CACHE_NAME);
+            const response = await cache.match(STATIC_ASSETS_CACHE_NAME);
+            if (response && !clear) {
+                fileContents = await response.json();
+                if (clear) {
+                    await cache.delete(STATIC_ASSETS_CACHE_NAME);
+                    await cache.put(STATIC_ASSETS_CACHE_NAME, new Response(JSON.stringify(fileContents)));
+                }
+            } else {
+                fileContents = {
+                    scriptLinks: [],
+                    cssLinks: [],
+                    inlineScripts: [],
+                    inlineCss: []
+                };
+                await cache.put(STATIC_ASSETS_CACHE_NAME, new Response(JSON.stringify(fileContents)));
+                //console.log('Cache for', STATIC_ASSETS_CACHE_NAME, 'has been initialized.');
+            }
+        } else {
+            console.error('Cache API not supported in this browser');
+        }
+    }
+
+    function appendStyleToEnd(content) {
+        const style = document.createElement('style');
+        style.textContent = content;
+        style.className = 'try-user-style';
+        const allStyles = document.body.querySelectorAll('style');
+        if (allStyles.length > 0) {
+            allStyles[allStyles.length - 1].after(style);
+        } else {
+            document.body.appendChild(style);
+        }
+    }
+
+    return {
+        createStaticAssets: async function () {
+            await loadFromCache(true);
+        },
+
+        saveScriptLink: function (src) {
+            if (!src) return;
+            fileContents.scriptLinks.push(src);
+        },
+
+        insertScriptLinks: function () {
+            fileContents.scriptLinks.forEach(src => {
+                if (!src) return;
+                const script = document.createElement('script');
+                script.src = src;
+                script.className = 'try-user-script';
+                script.type = 'text/javascript';
+                document.head.appendChild(script);
+            });
+        },
+
+        saveCssLink: function (href) {
+            if (!href) return;
+            fileContents.cssLinks.push(href);
+        },
+
+        insertCssLinks: function () {
+            fileContents.cssLinks.forEach(href => {
+                if (!href) return;
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.className = 'try-user-style';
+                link.href = href;
+                document.head.appendChild(link);
+            });
+        },
+
+        saveInLineScript: function (content) {
+            if (!content) return;
+            fileContents.inlineScripts.push(content);
+        },
+
+        insertInlineScripts: function () {
+            fileContents.inlineScripts.forEach(content => {
+                if (!content) return;
+                const script = document.createElement('script');
+                script.className = 'try-user-script';
+                script.textContent = content;
+                document.body.appendChild(script);
+            });
+        },
+
+        saveInlineCss: function (content) {
+            if (!content) return;
+            fileContents.inlineCss.push(content);
+        },
+
+        insertInlineCss: function () {
+            fileContents.inlineCss.forEach(content => {
+                if (!content) return;
+                appendStyleToEnd(content);
+            });
+        },
+
+        saveStaticAssets: async function () {
+            if ('caches' in window) {
+                const cache = await caches.open(CACHE_NAME);
+                await cache.put(STATIC_ASSETS_CACHE_NAME, new Response(JSON.stringify(fileContents)));
+                // console.log('Static assets saved to cache');
+            } else {
+                console.error('Cache API not supported in this browser');
+            }
+        },
+
+        loadStaticAssets: async function () {
+            await loadFromCache(false);
+            //console.log("-- loadStaticAssets --");
+            //console.log(this.getFileContents());
+
+            // Insert script links
+            this.insertScriptLinks();
+
+            // Insert CSS links
+            this.insertCssLinks();
+
+            // Insert inline scripts
+            this.insertInlineScripts();
+
+            // Insert inline CSS
+            this.insertInlineCss();
+
+            // clear cache so it won't be in my editor area
+            await loadFromCache(true);
+        },
+
+        getFileContents: function () {
+            return fileContents;
+        }
+    };
+})();
+
 
 window.Try.Editor = window.Try.Editor || (function () {
     let _editor;
@@ -154,7 +304,7 @@ window.Try.Editor = window.Try.Editor || (function () {
 
                 monaco.languages.html.razorDefaults.setModeConfiguration({
                     completionItems: true,
-                    diagnostics:  true,
+                    diagnostics: true,
                     documentFormattingEdits: true,
                     documentHighlights: true,
                     documentRangeFormattingEdits: true,
@@ -162,13 +312,15 @@ window.Try.Editor = window.Try.Editor || (function () {
 
                 registerLangugageProvider('razor');
                 registerLangugageProvider('csharp');
+                registerLangugageProvider('css');
+                registerLangugageProvider('javascript');
             })
         },
         getValue: function () {
             return _editor.getValue();
         },
         setValue: function (value) {
-            if(_editor) {
+            if (_editor) {
                 _editor.setValue(value);
             } else {
                 _overrideValue = value;
@@ -178,7 +330,7 @@ window.Try.Editor = window.Try.Editor || (function () {
             return _editor.focus();
         },
         setLanguage: function (language) {
-            if(_editor) {
+            if (_editor) {
                 monaco.editor.setModelLanguage(_editor.getModel(), language);
             }
         },
@@ -221,7 +373,7 @@ window.Try.CodeExecution = window.Try.CodeExecution || (function () {
 
     return {
         getCompilationDlls: async function (dllNames) {
-            const cache = await caches.open('dotnet-resources-/');
+            const cache = await caches.open(CACHE_NAME);
             const keys = await cache.keys();
             const dllsData = [];
             await Promise.all(dllNames.map(async (dll) => {
@@ -243,7 +395,7 @@ window.Try.CodeExecution = window.Try.CodeExecution || (function () {
                 return;
             }
 
-            const cache = await caches.open('dotnet-resources-/');
+            const cache = await caches.open(CACHE_NAME);
 
             const cacheKeys = await cache.keys();
             // Requires WasmFingerprintAssets to be enabled

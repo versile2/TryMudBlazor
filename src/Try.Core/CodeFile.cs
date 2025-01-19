@@ -29,6 +29,8 @@
                     {
                         RazorFileExtension => CodeFileType.Razor,
                         CsharpFileExtension => CodeFileType.CSharp,
+                        CssFileExtension => CodeFileType.Css,
+                        JsFileExtension => CodeFileType.Js,
                         _ => throw new NotSupportedException($"Unsupported extension: {extension}"),
                     };
                 }
