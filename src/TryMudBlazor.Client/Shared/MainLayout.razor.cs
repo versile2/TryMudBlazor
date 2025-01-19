@@ -35,6 +35,9 @@
                 await CompilationService.InitAsync(GetReferenceAssembliesStreamsAsync);
                 StateHasChanged();
             }
+
+            await Task.Yield(); // make sure refresh is finished
+            await JsRuntime.InvokeVoidAsync("updateIframeTheme");
         }
 
         private ValueTask<IReadOnlyList<byte[]>> GetReferenceAssembliesStreamsAsync(IReadOnlyCollection<string> referenceAssemblyNames)
