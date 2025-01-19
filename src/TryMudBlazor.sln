@@ -19,15 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nginx.conf = nginx.conf
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor", "..\MudBlazor\src\MudBlazor\MudBlazor.csproj", "{0A6E7394-6C3A-4EA7-B946-93050F9A169D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor", ".\submodules\MudBlazor\src\MudBlazor\MudBlazor.csproj", "{0A6E7394-6C3A-4EA7-B946-93050F9A169D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers", "..\MudBlazor\src\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{1F72E936-06A9-4FBB-847B-F5B232D167EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers", ".\submodules\MudBlazor\src\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{1F72E936-06A9-4FBB-847B-F5B232D167EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.SourceGenerator", "..\MudBlazor\src\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj", "{E77F7EB3-60B9-4212-A926-923DC295B420}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.SourceGenerator", ".\submodules\MudBlazor\src\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj", "{E77F7EB3-60B9-4212-A926-923DC295B420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Examples.Data", "..\MudBlazor\src\MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{DCF9B438-448A-4462-A01E-AB6B28D74A90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Examples.Data", ".\submodules\MudBlazor\src\MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{DCF9B438-448A-4462-A01E-AB6B28D74A90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs", "..\MudBlazor\src\MudBlazor.Docs\MudBlazor.Docs.csproj", "{7ADC2419-9C5B-4D49-A83A-132425749CD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs", ".\submodules\MudBlazor\src\MudBlazor.Docs\MudBlazor.Docs.csproj", "{7ADC2419-9C5B-4D49-A83A-132425749CD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

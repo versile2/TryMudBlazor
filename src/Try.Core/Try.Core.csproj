@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MudBlazor\src\MudBlazor\MudBlazor.csproj" />
+    <ProjectReference Include="..\submodules\MudBlazor\src\MudBlazor\MudBlazor.csproj" />
     <ProjectReference Include="..\UserComponents\Try.UserComponents.csproj" />
   </ItemGroup>
 
