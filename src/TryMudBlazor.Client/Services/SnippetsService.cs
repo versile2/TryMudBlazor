@@ -116,7 +116,10 @@
         public async Task<List<ComponentExample>> GetComponentExamples()
         {
             var response = await this.httpClient.GetAsync($"{this.snippetsService}/componentList");
-            response.EnsureSuccessStatusCode();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return new List<ComponentExample>();
+            }
             var resultStream = await response.Content.ReadAsStreamAsync();
 
             var options = new JsonSerializerOptions()

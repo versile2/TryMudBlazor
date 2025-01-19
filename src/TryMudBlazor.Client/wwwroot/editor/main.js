@@ -94,8 +94,23 @@ window.Try = {
             iFrame.src = newSrc;
         } else {
             // There needs to be some change so the iFrame is actually reloaded
-            iFrame.src = '';
+            const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+            iFrame.src = `${randomNum}`;
             setTimeout(() => iFrame.src = newSrc);
+        }
+    },
+    clearCache: async function () {
+        const cacheName = 'dotnet-resources-/';
+        try {
+            const cache = await caches.open(cacheName);
+            const keys = await cache.keys();
+
+            await Promise.all(keys.map(key => {
+                return cache.delete(key);
+            }));
+            console.log(`Cache '${cacheName}' has been cleared.`);
+        } catch (error) {
+            console.error('Error clearing cache:', error);
         }
     },
     dispose: function () {
@@ -179,103 +194,6 @@ window.Try.Editor = window.Try.Editor || (function () {
 window.Try.CodeExecution = window.Try.CodeExecution || (function () {
     const UNEXPECTED_ERROR_MESSAGE = 'An unexpected error has occurred. Please try again later or contact the team.';
 
-    function insertAssetsIntoIframe() {
-        // Select the iframe
-        const iframe = document.getElementById('user-page-window');
-        if (!iframe) {
-            return;
-        }
-
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
-        const insertScript = (src) => {
-            const script = iframeDoc.createElement('script');
-            script.className = 'try-user-script';
-            script.src = src;
-            iframeDoc.head.appendChild(script);
-        };
-
-        const insertStyle = (href) => {
-            const link = iframeDoc.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            link.className = 'try-user-style';
-            iframeDoc.head.appendChild(link);
-        };
-
-        // Extract script elements
-        const scriptDiv = document.querySelector('div.scriptAdds');
-        if (scriptDiv) {
-            Array.from(scriptDiv.children).forEach(span => {
-                const src = span.title;
-                if (src) {
-                    insertScript(src);
-                }
-            });
-        }
-
-        // Extract style elements
-        const styleDiv = document.querySelector('div.styleAdds');
-        if (styleDiv) {
-            Array.from(styleDiv.children).forEach(span => {
-                const href = span.title;
-                if (href) {
-                    insertStyle(href);
-                }
-            });
-        }
-    }
-
-    function insertCssContentIntoIframe(cssContent) {
-        const iframe = document.getElementById('user-page-window');
-        if (!iframe) {
-            console.error('Iframe with id "user-page-window" not found.');
-            return;
-        }
-
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const style = iframeDoc.createElement('style');
-        style.className = 'try-user-style';
-
-        const cleanedCssContent = cssContent.replace(/<\/?style[^>]*>/gi, '');
-        style.textContent = cleanedCssContent;
-
-        iframeDoc.head.appendChild(style);  // Append style to the end of head
-    }
-
-    function insertJsContentIntoIframe(jsContent) {
-        const iframe = document.getElementById('user-page-window');
-        if (!iframe) {
-            console.error('Iframe with id "user-page-window" not found.');
-            return;
-        }
-
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const script = iframeDoc.createElement('script');
-        script.className = 'user-script';
-        const cleanedJsContent = jsContent.replace(/<\/?script[^>]*>/gi, '');
-        script.textContent = cleanedJsContent;
-
-        iframeDoc.body.appendChild(script);  // Append script to body for immediate execution
-    }
-
-    function removeUserScriptsAndStyles() {
-        const iframe = document.getElementById('user-page-window');
-        if (!iframe) {
-            return;
-        }
-
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
-        Array.from(iframeDoc.querySelectorAll('script.try-user-script')).forEach(script => {
-            script.remove();
-        });
-
-        Array.from(iframeDoc.querySelectorAll('style.try-user-style')).forEach(style => {
-            style.remove();
-        });
-    }
-
     function putInCacheStorage(cache, fileName, fileBytes, contentType) {
         const cachedResponse = new Response(
             new Blob([fileBytes]),
@@ -308,11 +226,13 @@ window.Try.CodeExecution = window.Try.CodeExecution || (function () {
             const dllsData = [];
             await Promise.all(dllNames.map(async (dll) => {
                 // Requires WasmFingerprintAssets to be enabled
-                const pattern = new RegExp(`${dll}.[^\\.]*\\.dll`, 'i');
-                const dllKey = keys.find(x => pattern.test(x.url)).url.substring(window.location.origin.length);
-                const response = await cache.match(dllKey);
-                const bytes = new Uint8Array(await response.arrayBuffer());
-                dllsData.push(bytes);
+                try {
+                    const pattern = new RegExp(`${dll}.[^\\.]*\\.dll`, 'i');
+                    const dllKey = keys.find(x => pattern.test(x.url)).url.substring(window.location.origin.length);
+                    const response = await cache.match(dllKey);
+                    const bytes = new Uint8Array(await response.arrayBuffer());
+                    dllsData.push(bytes);
+                } catch { }
             }));
 
             return dllsData;

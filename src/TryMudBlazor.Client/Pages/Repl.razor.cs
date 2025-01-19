@@ -32,8 +32,8 @@
         private bool _overlayExamples = false;
         private List<StaticAsset> cssORjsFiles = 
             [
-            new StaticAsset { Location="https://code.jquery.com/jquery-3.7.1.slim.min.js", IsIncluded=true, Name="jquery-3.7.1.slim.min.js" },
-            new StaticAsset { Location="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", IsIncluded=true, Name="font-awesome.min.css" }
+            new StaticAsset { Location="https://code.jquery.com/jquery-3.7.1.slim.min.js", IsIncluded=true, Name="jquery-3.7.1.slim.min.js", FileType = FileType.JS },
+            new StaticAsset { Location="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", IsIncluded=true, Name="font-awesome.min.css", FileType = FileType.CSS }
             ];
 
         private string LayoutStyle()
@@ -60,6 +60,9 @@
 
         [Inject]
         public CompilationService CompilationService { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public IJSInProcessRuntime JsRuntime { get; set; }
@@ -129,6 +132,12 @@
         {
             ShowDiagnostics = !ShowDiagnostics;
             AreDiagnosticsShown = ShowDiagnostics;
+        }
+
+        private async Task ClearCache()
+        {
+            await JsRuntime.InvokeVoidAsync("Try.clearCache");
+            NavigationManager.NavigateTo(NavigationManager.BaseUri);
         }
 
         private string Version
@@ -295,23 +304,23 @@
                     this.CodeFiles.Values,
                     this.UpdateLoaderTextAsync);
 
-                // clear user scripts and styles
-                await JsRuntime.InvokeVoidAsync("Try.CodeExecution.removeUserScriptsAndStyles");
+                //// clear user scripts and styles
+                //await JsRuntime.InvokeVoidAsync("removeUserScriptsAndStyles");
 
-                // add cdn style scripts and styles
-                await JsRuntime.InvokeVoidAsync("Try.CodeExecution.insertAssetsIntoIframe");
+                //// add cdn style scripts and styles
+                //await JsRuntime.InvokeVoidAsync("insertAssetsIntoIframe");
 
-                // set js scripts
-                foreach (CodeFile f  in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Js))
-                {
-                    await JsRuntime.InvokeVoidAsync("Try.CodeExecution.insertJsContentIntoIframe", f.Content);
-                }
+                //// set js scripts
+                //foreach (CodeFile f  in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Js))
+                //{
+                //    await JsRuntime.InvokeVoidAsync("insertJsContentIntoIframe", f.Content);
+                //}
 
-                // set css scripts
-                foreach (CodeFile f in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Css))
-                {
-                    await JsRuntime.InvokeVoidAsync("Try.CodeExecution.insertCssContentIntoIframe", f.Content);
-                }
+                //// set css scripts
+                //foreach (CodeFile f in this.CodeFiles.Values.Where(x => x.Type == CodeFileType.Css))
+                //{
+                //    await JsRuntime.InvokeVoidAsync("insertCssContentIntoIframe", f.Content);
+                //}
 
                 this.Diagnostics = compilationResult.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
                 this.AreDiagnosticsShown = true;

@@ -5,7 +5,7 @@
 
     public class ComponentService
     {
-        private readonly string _basePath = "../MudBlazor.Docs/Pages/Components";
+        private readonly string _basePath = "../../MudBlazor/src/MudBlazor.Docs/Pages/Components";
         public bool IsInitialized { get; private set; } = false;
         public List<ComponentExample> Examples { get; private set; } = [];
 

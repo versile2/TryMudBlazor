@@ -24,7 +24,7 @@
                     <MudList T="string">
                         @foreach (var item in AddLinks)
                         {
-                            <MudListItem OnClick="@(() => item.IsIncluded = !item.IsIncluded)" Class="py-0 my-n1">
+                            <MudListItem OnClick="@(() => item.IsIncluded = !item.IsIncluded)" Class="py-0 my-0">
                                 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                                     <MudText Typo="Typo.body2">@item.Name</MudText>
                                     <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="my-0">
