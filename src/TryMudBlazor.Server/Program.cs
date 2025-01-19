@@ -57,7 +57,7 @@ public class Program
 
         // Cache busting
         var cacheBusting = DateTimeVersion.Cache;
-        // Custom middleware to replace #{CACHE_TOKEN}#
+        // Custom middleware to replace #{CACHE_TOKEN}# doesn't work in docker
         app.Use(async (context, next) =>
         {
             if (context.Request.Path == "/index.html" || context.Request.Path == "/") // Check if the request is for index.html or root

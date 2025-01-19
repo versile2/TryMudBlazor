@@ -84,7 +84,7 @@ namespace TryMudBlazor.Client.Components
                     Snackbar.Add($"Link does not exist or error occurred. Status code: {response.StatusCode}", Severity.Error);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Handle network errors or other exceptions
                 Snackbar.Add("Unable to verify link, Link not added.", Severity.Error);

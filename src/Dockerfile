@@ -2,14 +2,18 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
+# Copy submodule files
+RUN mkdir -p ./submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components
+COPY ./submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components/. ./submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components/
+COPY ./submodules/MudBlazor/src/MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj ./MudBlazor.Examples.Data/
+
+# Only needed if using the project reference instead of nuget reference
+COPY ./submodules/MudBlazor/src/MudBlazor/MudBlazor.csproj ./MudBlazor/
+COPY ./submodules/MudBlazor/src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj ./MudBlazor.Analyzers/
+COPY ./submodules/MudBlazor/src/MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj ./MudBlazor.SourceGenerator/
+
 # Copy project files
 COPY ./TryMudBlazor.Server/TryMudBlazor.Server.csproj ./TryMudBlazor.Server/
-COPY ./MudBlazor/MudBlazor.csproj ./MudBlazor/
-COPY ./MudBlazor.Docs/MudBlazor.Docs.csproj ./MudBlazor.Docs/
-COPY ./MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj ./MudBlazor.Docs.Compiler/
-COPY ./MudBlazor.Analyzers/MudBlazor.Analyzers.csproj ./MudBlazor.Analyzers/
-COPY ./MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj ./MudBlazor.SourceGenerator/
-COPY ./MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj ./MudBlazor.Examples.Data/
 COPY ./TryMudBlazor.Client/TryMudBlazor.Client.csproj ./TryMudBlazor.Client/
 COPY ./Try.Core/Try.Core.csproj ./Try.Core/
 COPY ./UserComponents/Try.UserComponents.csproj ./UserComponents/
@@ -25,6 +29,13 @@ RUN dotnet publish ./TryMudBlazor.Server/TryMudBlazor.Server.csproj -c Release -
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
+
+# Create the directory in runtime stage
+RUN mkdir -p /app/submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components
+# Copy the Components directory from build stage
+COPY --from=build /app/submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components/. /app/submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components/
+# Now we can verify
+RUN ls -la /app/submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components
 
 # Copy both published outputs
 COPY --from=build /app/server-publish .

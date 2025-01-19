@@ -5,7 +5,8 @@
 
     public class ComponentService
     {
-        private readonly string _basePath = "./submodules/MudBlazor/src/MudBlazor.Docs/Pages/Components";
+        private readonly string _basePath = Path.Combine("..", "submodules", "MudBlazor", "src", "MudBlazor.Docs", "Pages", "Components");
+        private readonly string _basePathDocker = Path.Combine("submodules", "MudBlazor", "src", "MudBlazor.Docs", "Pages", "Components");
         public bool IsInitialized { get; private set; } = false;
         public List<ComponentExample> Examples { get; private set; } = [];
 
@@ -16,7 +17,18 @@
 
         private void LoadComponents()
         {
-            var componentDirs = Directory.GetDirectories(_basePath);
+            string usePath = _basePath;
+            if (!Directory.Exists(usePath)) 
+            {
+                usePath = _basePathDocker;
+            }
+            if (!Directory.Exists(usePath))
+            {
+                Console.WriteLine("No path to components found.");
+                Console.WriteLine($"Current path: {Path.GetFullPath(".")}");
+                return;
+            }
+            var componentDirs = Directory.GetDirectories(usePath);
 
             foreach (var componentDir in componentDirs)
             {
