@@ -61,13 +61,25 @@
     <script src="_content/MudBlazor/MudBlazor.min.js?v=#{CACHE_TOKEN}#"></script>
     <script src="editor/main.js?v=#{CACHE_TOKEN}#"></script>
     <script type="text/javascript">
-        window.addEventListener('storage', (e) => {
-            if (e.key == "userPreferences") {
-                const mudblazorTheme = parent.document.getElementsByTagName('style')[4];
-                const iFrameTheme = document.getElementsByTagName('style')[3];
-                iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+        function updateIframeTheme() {
+            const mudblazorTheme = parent.document.querySelector('.mud-theme-provider') || parent.document.getElementsByTagName('style')[3];
+
+            if (mudblazorTheme) {
+                // Find the iframe
+                const userPageIframe = parent.document.getElementById('user-page-window');
+
+                if (userPageIframe && userPageIframe.contentDocument) {
+                    const iframeDoc = userPageIframe.contentDocument;
+                    const iFrameTheme = iframeDoc.querySelector('.mud-theme-provider') || iframeDoc.getElementsByTagName('style')[2];
+
+                    if (iFrameTheme) {
+                        iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
+                    } 
+                } 
+            } else {
+                console.error('Could not find the parent theme element.');
             }
-        });
+        }
     </script>
 </body>
 
