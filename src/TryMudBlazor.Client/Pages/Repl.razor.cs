@@ -282,6 +282,8 @@
             await LayoutService.ToggleDarkMode();
             string theme = LayoutService.IsDarkMode ? "vs-dark" : "default";
             this.JsRuntime.InvokeVoid(Try.Editor.SetTheme, theme);
+            await Task.Yield();
+            await JsRuntime.InvokeVoidAsync("updateIframeTheme");
         }
     }
 }
