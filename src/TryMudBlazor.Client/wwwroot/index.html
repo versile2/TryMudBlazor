@@ -62,7 +62,7 @@
     <script src="editor/main.js?v=#{CACHE_TOKEN}#"></script>
     <script type="text/javascript">
         function updateIframeTheme() {
-            const mudblazorTheme = parent.document.querySelector('.mudThemeProvider') || parent.document.getElementsByTagName('style')[3];
+            const mudblazorTheme = parent.document.querySelector('.mud-theme-provider') || parent.document.getElementsByTagName('style')[3];
 
             if (mudblazorTheme) {
                 // Find the iframe
@@ -70,7 +70,7 @@
 
                 if (userPageIframe && userPageIframe.contentDocument) {
                     const iframeDoc = userPageIframe.contentDocument;
-                    const iFrameTheme = iframeDoc.querySelector('.mudThemeProvider') || iframeDoc.getElementsByTagName('style')[2];
+                    const iFrameTheme = iframeDoc.querySelector('.mud-theme-provider') || iframeDoc.getElementsByTagName('style')[2];
 
                     if (iFrameTheme) {
                         iFrameTheme.innerHTML = mudblazorTheme.innerHTML;
