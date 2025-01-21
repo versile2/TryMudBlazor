@@ -43,7 +43,7 @@ public class Program
 
         app.MapControllers();
 
-        var v = typeof(MudText).Assembly.GetName().Version;        
+        var v = typeof(MudText).Assembly.GetName().Version;
         var cacheBusting = $"v{v.Major}.{v.Minor}.{v.Build}";
         app.MapFallbackToFile("index.html").CacheOutput(policy => policy.SetVaryByQuery("cachebust", cacheBusting));
 
