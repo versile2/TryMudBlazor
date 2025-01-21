@@ -282,6 +282,7 @@
             await LayoutService.ToggleDarkMode();
             string theme = LayoutService.IsDarkMode ? "vs-dark" : "default";
             this.JsRuntime.InvokeVoid(Try.Editor.SetTheme, theme);
+            // LayoutService calls StateHasChanged, we need the updated <style> tags for updateIframeTheme to work
             await Task.Yield();
             await JsRuntime.InvokeVoidAsync("updateIframeTheme");
         }
