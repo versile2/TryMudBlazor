@@ -37,6 +37,9 @@
         [Inject]
         public IJSInProcessRuntime JsRuntime { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         [Parameter]
         public string SnippetId { get; set; }
 
@@ -282,6 +285,12 @@
             await LayoutService.ToggleDarkMode();
             string theme = LayoutService.IsDarkMode ? "vs-dark" : "default";
             this.JsRuntime.InvokeVoid(Try.Editor.SetTheme, theme);
+        }
+
+        private async Task ClearCache()
+        {
+            await JsRuntime.InvokeVoidAsync("Try.clearCache");
+            NavigationManager.NavigateTo(NavigationManager.BaseUri, true);
         }
     }
 }
