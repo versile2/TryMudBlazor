@@ -9,6 +9,10 @@
     .try-editor {
         margin-left: var(--mud-drawer-width-mini-left) !important;
     }
+    .try-avatar {
+        border-color: var(--try-drawer-text);
+        color: var(--try-drawer-text);
+    }
 </style>
 
 <div class="try-layout">
@@ -25,18 +29,18 @@
         </MudTooltip>
         <MudSpacer />
         <MudStack Class="mb-12" AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudAvatar Color="Color.Info" Size="Size.Small" Class="my-auto">T</MudAvatar>
-            <MudAvatar Color="Color.Info" Size="Size.Small" Class="my-auto">R</MudAvatar>
-            <MudAvatar Color="Color.Info" Size="Size.Small" Class="my-auto">Y</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">M</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">U</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">D</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">B</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">L</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">A</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">Z</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">O</MudAvatar>
-            <MudAvatar Color="Color.Error" Size="Size.Small" Class="my-auto">R</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">T</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">R</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">Y</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">M</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">U</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">D</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">B</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">L</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">A</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">Z</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">O</MudAvatar>
+            <MudAvatar Variant="Variant.Outlined" Size="Size.Small" Class="my-auto try-avatar">R</MudAvatar>
             <MudTooltip Text="Cleanup and Clear Compiler Cache" Delay="800" Arrow Placement="Placement.Right" Color="Color.Dark">
                 <MudIconButton OnClick="@ClearCache" Icon="@Icons.Material.Filled.CleanHands" Color="@(LayoutService.IsDarkMode ? Color.Info : Color.Inherit)" />
             </MudTooltip>
