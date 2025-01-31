@@ -1,3 +1,0 @@
-[submodule "MudBlazor"]
-	path = src/submodules/MudBlazor
-	url = https://github.com/MudBlazor/MudBlazor.git
