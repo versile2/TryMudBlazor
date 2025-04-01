@@ -18,7 +18,7 @@
         private void LoadComponents()
         {
             string usePath = _basePath;
-            if (!Directory.Exists(usePath)) 
+            if (!Directory.Exists(usePath))
             {
                 usePath = _basePathDocker;
             }
@@ -132,6 +132,9 @@
                     }
                 }
             }
+
+            Examples = Examples.OrderBy(e => e.ComponentName).ThenBy(e => e.ExampleShortName).ToList();
+
         }
 
         private string CleanInvalidLines(string fileContents)
