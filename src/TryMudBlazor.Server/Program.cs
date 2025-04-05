@@ -1,4 +1,3 @@
-using MudBlazor;
 using MudBlazor.Examples.Data;
 
 namespace TryMudBlazor.Server;
@@ -43,10 +42,18 @@ public class Program
 
         app.MapControllers();
 
-        var v = typeof(MudText).Assembly.GetName().Version;
-        var cacheBusting = $"v{v.Major}.{v.Minor}.{v.Build}";
-        app.MapFallbackToFile("index.html").CacheOutput(policy => policy.SetVaryByQuery("cachebust", cacheBusting));
+        var version = GetVersion();
+        var cacheBusting = $"v{version.Major}.{version.Minor}.{version.Build}";
+        app.MapFallbackToFile("index.html")
+            .CacheOutput(policy => policy.SetVaryByQuery("cachebust", cacheBusting));
 
         app.Run();
+    }
+
+    private static Version GetVersion()
+    {
+        var version = typeof(MudBlazor._Imports).Assembly.GetName().Version;
+
+        return version ?? new Version(0, 0, 0);
     }
 }
