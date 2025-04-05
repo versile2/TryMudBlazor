@@ -16,7 +16,7 @@
 </style>
 
 <div class="try-layout">
-    <MudDrawer Open="true" Fixed="false" Elevation="1" Variant="@DrawerVariant.Persistent" Class="try-drawer mud-drawer-mini">
+    <MudDrawer Open="true" Fixed="false" Elevation="1" Breakpoint="Breakpoint.None" Variant="@DrawerVariant.Persistent" Class="try-drawer mud-drawer-mini">
         <MudTooltip Text="Run your code">
             <MudIconButton title="Run (Ctrl + S)" OnClick="@CompileAsync" Disabled="@Loading" Icon="@Icons.Material.Rounded.PlayArrow" Color="@(LayoutService.IsDarkMode ? Color.Success : Color.Inherit)" />
         </MudTooltip>        
@@ -74,13 +74,12 @@
         {
             return Color.Error;
         }
-        else if (WarningsCount != 0)
+
+        if (WarningsCount != 0)
         {
             return Color.Warning;
         }
-        else
-        {
-            return Color.Inherit;
-        }
+
+        return Color.Inherit;
     }
 }
